@@ -1,0 +1,19 @@
+{
+  "name": "livegame_windows",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/w099099w/liveGame_Windows.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/w099099w/liveGame_Windows/issues"
+  },
+  "homepage": "https://github.com/w099099w/liveGame_Windows#readme",
+  "description": ""
+}
