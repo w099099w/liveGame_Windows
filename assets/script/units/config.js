@@ -54,7 +54,9 @@ var G = {
     * @param {object} USER 用户配置
     */
   USER: {
-    curResolutionID:0,
+    choose_gameID:null,//选择的游戏ID
+    curResolutionID:0,//选择的分辨率组ID
+    keyBind:null,//用户设定的按键绑定
   },
   /**
     * @description 游戏配置
@@ -156,28 +158,29 @@ var G = {
     * @return {string} 返回文件名称出错返回null;
     */
     cardValueToName(num,color){
-      if(num < 1 || num > 15 || color < 0 || color > 5){
+      console.log(num,color);
+      if(num < 0 || num > 13 || color < 1 || color > 8){
         return null;
       }
       let cardName = null;
-      if(color !== 5 && color > 0 && color <= 4){
+      if(color >= 5 && color <= 8){
           let m_color = null;
           switch(color){
-              case 1:m_color = 3;break;
-              case 2:m_color = 2;break;
-              case 3:m_color = 1;break;
-              case 4:m_color = 0;break;
+              case 8:m_color = 3;break;
+              case 7:m_color = 2;break;
+              case 6:m_color = 1;break;
+              case 5:m_color = 0;break;
           }
           cardName = 'x'+String(((num-1)*4)+m_color);
-      }else if(color === 5 && (num === 14 || num === 15)){
-          if(num === 14){
+      }else if((color === 1 || color === 2)&& (num === 0 || num === 0)){
+          if(color === 2){
               cardName = 'x52'; 
           }else{
               cardName = 'x53'; 
           }
       }
       if(!cardName || Number(cardName.substr(1,2)) < 0 || Number(cardName.substr(1,2)) > 53){
-          console.log('error牌值计算错误')
+          console.log('error牌值计算错误',cardName)
           return null;
       }
       return cardName;

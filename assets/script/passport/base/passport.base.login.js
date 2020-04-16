@@ -50,6 +50,7 @@ M.request = function(){
     }
     console.log('登录请求数据',requestData);
     this.frame.common.loading.show('正在加载...',1000,false,true,()=>{
+        G.USER.choose_gameID = Number(this.choose_gameID);
         cc.director.loadScene('mainScene');
     });
 }

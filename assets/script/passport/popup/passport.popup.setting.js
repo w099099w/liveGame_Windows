@@ -17,9 +17,10 @@ M.init = function(component,frame){
     this.addEvent();
 }
 M.reset = function(){
-    this.keyBind = cc.sys.localStorage.getItem('keyBind')?JSON.parse(cc.sys.localStorage.getItem('keyBind')):{state:9,cin:32};
-    this.node.stateCtrl_Label.string = this.keyShow(Number(this.keyBind.state));
-    this.node.cinCardType_Label.string = this.keyShow(Number(this.keyBind.cin));
+    let keyBind = cc.sys.localStorage.getItem('keyBind')?JSON.parse(cc.sys.localStorage.getItem('keyBind')):{state:9,cin:32};
+    G.USER.keyBind = keyBind;
+    this.node.stateCtrl_Label.string = this.keyShow(Number(G.USER.keyBind.state));
+    this.node.cinCardType_Label.string = this.keyShow(Number(G.USER.keyBind.cin));
     this.node.parent.active = true;
     this.node.mask.active = false;
     this.node.root.active = false;
@@ -112,7 +113,7 @@ M.keyShow = function(keyCode){
     return showString?showString:String.fromCharCode(keyCode);
 }
 M.onKeyDown_state = function(event){
-    if(event.keyCode == this.keyBind.cin){
+    if(event.keyCode == G.USER.keyBind.cin){
         this.frame.common.toast.show('不能与牌型录入按键相同,请重新键入!')
         return;
     }
@@ -121,12 +122,12 @@ M.onKeyDown_state = function(event){
     cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown_state, this);
     let keyBind = {
         state:Number(event.keyCode),
-        cin:this.keyBind.cin
+        cin:G.USER.keyBind.cin
     }
     cc.sys.localStorage.setItem('keyBind',JSON.stringify(keyBind));
 }
 M.onKeyDown_cinCardType = function(event){
-    if(event.keyCode == this.keyBind.state){
+    if(event.keyCode == G.USER.keyBind.state){
         this.frame.common.toast.show('不能与状态控制按键相同,请重新键入!')
         return;
     }
@@ -134,7 +135,7 @@ M.onKeyDown_cinCardType = function(event){
     this.node.cinCardType_Label.string = showString;
     cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown_cinCardType, this);
     let keyBind = {
-        state:this.keyBind.state,
+        state:G.USER.keyBind.state,
         cin:Number(event.keyCode)
     }
     cc.sys.localStorage.setItem('keyBind',JSON.stringify(keyBind));

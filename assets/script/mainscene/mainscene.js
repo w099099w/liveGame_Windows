@@ -6,15 +6,21 @@ let frame = {
     },
     view: {
         base:{
-            login:require('passport.base.login'),
+            notice:require('mainscene.base.notice'),
+            home:require('mainscene.base.home'),
         },
         popup:{
-            setting:require('passport.popup.setting'),
+            quit:require('mainscene.popup.quit'),
+            endGame:require('mainscene.popup.endgame'),
         }
+    },
+    logic:{
+        scene:require('mainscene.logic.scene'),
     },
     //切换场景时调用destory的脚本
     onDestroy:{
-        setting:require('passport.popup.setting'),
+        home:require('mainscene.base.home'),
+        scene:require('mainscene.logic.scene'),
     },
     //每帧调用updata的脚本
     updata:{
@@ -23,27 +29,46 @@ let frame = {
 cc.Class({
     extends: cc.Component,
     properties: {
+        sgListPrefab:{
+            tooltip:'三公主预制体',
+            default:null,
+            type:cc.Prefab,
+        },
+        pairListPrefab:{
+            tooltip:'对子主预制体',
+            default:null,
+            type:cc.Prefab,
+        },
     },
 
     onLoad () {
         //按指定顺序初始化脚本
         this.frame = frame;
+        this.frame.gamePrefab = G.USER.choose_gameID === 0?this.sgListPrefab:this.pairListPrefab;//传入主预制体
         this.frame.node = this.node;
         this.init();
     },
     init(){
         for (let key in frame.common) {
+            console.log('初始化模块'+key);
             this.frame.common[key].init(cc.Component, frame)
         }
         for (let key in frame.view) {
             for (let k in frame.view[key]){
+                console.log('初始化模块'+key+'.'+k);
                 this.frame.view[key][k].init(cc.Component, frame)
             }   
         }
+        for (let key in frame.logic) {
+            console.log('初始化模块'+key);
+            this.frame.logic[key].init(cc.Component, frame)
+        }
     },
     start () {
-        this.frame.common.loadAtlas.loadAtlas('card','card/card');//预加载牌
-        this.frame.view.base.login.show();
+        this.frame.logic.scene.start();
+        setTimeout(()=>{
+            this.frame.view.base.notice.addText("这是一个通知的测试用于测试可用性");
+        },2000);
     },
     onMessage(code,data){
         console.log('passport网络消息(websocket)',code,data);
