@@ -1,6 +1,7 @@
 var G = {
   NETWORK: {
-    HTTP:cc.sys.isNative?"http://192.168.8.120":'http://live.php.com', //http服务器根地址
+    //HTTP:cc.sys.isNative?"http://192.168.8.120":'http://live.php.com', //http服务器根地址
+    HTTP:"http://live.php.com",
     WS: "ws://192.168.8.120:9502", //websocket服务器地址
     httpOutTimer:20,
     clientID:null,//客户端本次连接ID

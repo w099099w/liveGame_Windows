@@ -12,7 +12,7 @@ M.init = function(component,frame){
         button_beting:{
             root:cc.find('buttom/button_betorbeting',frame.node),
             comp:cc.find('buttom/button_betorbeting',frame.node).getComponent(cc.Button),
-            label:cc.find('button//Background/label',frame.node).getComponent(cc.Label)
+            label:cc.find('buttom/button_betorbeting/Background/value',frame.node).getComponent(cc.Label)
         },
         playerList:null,
         gamePrefab:frame.gamePrefab,
@@ -87,7 +87,7 @@ M.lookCard = function(cardCode){
         if(cardName){
             targetNode.runAction(cc.sequence(cc.scaleTo(0.2, 0, 1), cc.scaleTo(0.2, 1, 1),cc.callFunc(()=>{
                 targetNode.getComponent(cc.Sprite).spriteFrame = this.frame.common.loadAtlas.getSpriteFrame('card',cardName);
-                if(checkAllCardIslooked){
+                if(this.checkAllCardIslooked()){
                     this.setBetButtonState(BetState.STATE_OPENCARD);
                 }
             })),this);

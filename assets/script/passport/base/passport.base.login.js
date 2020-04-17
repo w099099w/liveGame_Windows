@@ -58,13 +58,13 @@ M.request = function(){
         return;
     }
     let requestData ={
-        game:G.GAME[Number(this.choose_gameID)].id,
+        game:String(G.GAME[Number(this.choose_gameID)].id),
         password:this.node.input_password.string,
         name:this.node.input_phone.string,
-        client_id:Number(G.NETWORK.clientID),
+        client_id:String(G.NETWORK.clientID),
     }
     G.NETWORK.request('post','/dealer/login',requestData,this.frame.common,(success)=>{
-        if(success.code === 0){
+        if(success.code === 200){
             if(success.data){
                 cc.sys.localStorage.setItem('token',success.data.token);
                 this.frame.common.loading.show('正在加载...',1000,false,true,()=>{
