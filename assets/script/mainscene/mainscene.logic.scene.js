@@ -40,7 +40,7 @@ M.start = function(){
     let i = 0;
     this.timer = setInterval(()=>{
         if(this.codeArr[i]){
-            this.frame.view.base.home.openCard(this.codeArr[i++]);
+            this.frame.view.base.home.lookCard(this.codeArr[i++]);
         }else{
             clearInterval(this.timer);
             this.timer = null;

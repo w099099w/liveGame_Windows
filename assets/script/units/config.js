@@ -195,3 +195,24 @@ var G = {
   */
   VERIFYTIME:120,
 };
+/**
+ * @description:开始下注按钮状态枚举
+ * @readonly
+ */
+const BetState = cc.Enum({
+  /**
+  * @description 开始押注
+  * @type {number} 
+ */
+  STATE_BET:0,
+ /**
+  * @description 押注中
+  * @type {number} 
+ */
+  STATE_BETING:1,
+  /**
+  * @description 确认开牌
+  * @type {number} 
+ */
+  STATE_OPENCARD:2
+});

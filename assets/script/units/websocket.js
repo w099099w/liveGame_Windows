@@ -147,6 +147,7 @@ webSocket.onMessage = function(event) {
     console.log(msg);
     if(msg){
         if(msg.code === 'keep'){
+            console.log('准许继续连接!')
            this.sendTimer = true;
            return;
         }else if(msg.code === 'init'){

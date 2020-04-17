@@ -30,7 +30,9 @@ M.hide = function(){
 }
 M.request = function(){
     //网络请求
+    G.NETWORK.request('get','/dealer/logout');
     this.frame.common.loading.show('正在退出登录...',1000,false,true,()=>{
+        cc.sys.localStorage.removeItem('token');
         cc.director.loadScene('passport');
     })
 }

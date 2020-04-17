@@ -2147,7 +2147,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "button_betorbetting",
+    "_name": "button_betorbeting",
     "_objFlags": 0,
     "_parent": {
       "__id__": 27
@@ -2282,7 +2282,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Label",
+    "_name": "value",
     "_objFlags": 0,
     "_parent": {
       "__id__": 46

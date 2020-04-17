@@ -34,8 +34,7 @@ M.reset = function(){
         if(webSocket.state == 1){
             this.frame.common.toast.show(failed.message);
         } 
-    });
-    
+    });  
 }
 M.show = function(){
     this.node.root.active = true;
