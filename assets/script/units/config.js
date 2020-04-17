@@ -1,7 +1,7 @@
 var G = {
   NETWORK: {
-    HTTP:cc.sys.isNative?"http://192.168.8.120":'http://live.go.com', //http服务器根地址
-    WS: "ws://192.168.8.120:7272", //websocket服务器地址
+    HTTP:cc.sys.isNative?"http://192.168.8.120":'http://live.php.com', //http服务器根地址
+    WS: "ws://192.168.8.120:9502", //websocket服务器地址
     httpOutTimer:20,
     clientID:null,//客户端本次连接ID
     isHeartBeat: true, //是否开启心跳
@@ -61,16 +61,7 @@ var G = {
   /**
     * @description 游戏配置
     */
-  GAME: [
-    {
-      game_name:"三公大吃小",
-      max_player:6
-    },
-    {
-      game_name:"对子大吃小",
-      max_player:4
-    }
-  ],
+  GAME: [],//游戏配置
   RESOULTION:[
     {width:640,height:360},
     {width:768,height:432},

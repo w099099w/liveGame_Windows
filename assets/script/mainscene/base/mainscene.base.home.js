@@ -59,7 +59,7 @@ M.inistancePlayerList = function(){
 M.openCard = function(cardCode){
     let id = Number(cardCode.substr(0,2))-1;//除法向下取整减一
     let cardLayoutNum = G.USER.choose_gameID === 0?3:2;
-    if(id < 0 || id > G.GAME[G.USER.choose_gameID].max_player * cardLayoutNum-1){
+    if(id < 0 || id > G.GAME[G.USER.choose_gameID].region * cardLayoutNum-1){
         return;
     }
 

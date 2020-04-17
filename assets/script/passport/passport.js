@@ -26,10 +26,20 @@ cc.Class({
     },
 
     onLoad () {
+        console.log('重置')
+        //重置标识
+        G.NETWORK.clientID = null;
+        cc.sys.localStorage.removeItem('token');
         //按指定顺序初始化脚本
         this.frame = frame;
         this.frame.node = this.node;
         this.init();
+        //创建websocket
+        if(webSocket.state() !== 0){
+            webSocket.create(G.NETWORK.WS,this.frame.common.loading);
+        }
+        webSocket.gameMessage = this.onMessage.bind(this);
+        cc.director.preloadScene('mainScene');//预加载主场景;
     },
     init(){
         for (let key in frame.common) {

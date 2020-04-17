@@ -1,4 +1,4 @@
-
+let toast = require('common.toast');
 cc.Class({
     extends: cc.Component,
     properties: {
@@ -42,6 +42,10 @@ cc.Class({
         this.initItems();
     },
     comboboxClicked (index) {
+        if(!this.itemArray || this.itemArray.length === 0){
+            toast.show('获取游戏列表失败,请重启游戏后在试');
+            return;
+        }
         // 旋转小三角形
         this.rotateTriangle();
         // 下拉框显示与隐藏
