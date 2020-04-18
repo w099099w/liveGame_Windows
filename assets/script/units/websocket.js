@@ -142,12 +142,10 @@ webSocket.isJsonStr = function(str){
  * 网络消息
  */
 webSocket.onMessage = function(event) {
-    console.log("websocket网络消息==========")
     let msg = this.isJsonStr(event.data);
-    console.log(msg);
     if(msg){
         if(msg.code === 'keep'){
-            console.log('准许继续连接!')
+            console.log('准许保持连接');
            this.sendTimer = true;
            return;
         }else if(msg.code === 'init'){
@@ -155,6 +153,7 @@ webSocket.onMessage = function(event) {
             this.loading.hide();
             return;
         }
+      console.log("websocket网络消息==========");
       this.queue.push(msg)//推送到队列
     } 
 }

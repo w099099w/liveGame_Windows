@@ -26,7 +26,6 @@ cc.Class({
     },
 
     onLoad () {
-        console.log('重置')
         //重置标识
         G.NETWORK.clientID = null;
         cc.sys.localStorage.removeItem('token');

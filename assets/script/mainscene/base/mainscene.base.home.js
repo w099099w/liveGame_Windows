@@ -9,6 +9,7 @@ M.init = function(component,frame){
         quit_show:cc.find('top/button_quit',frame.node),
         endgame_show:cc.find('buttom/button_gameend',frame.node),
         mainNode:cc.find('home',frame.node),
+        button_gameStart:cc.find('buttom/button_gamestart',frame.node),
         button_beting:{
             root:cc.find('buttom/button_betorbeting',frame.node),
             comp:cc.find('buttom/button_betorbeting',frame.node).getComponent(cc.Button),
@@ -27,7 +28,7 @@ M.reset = function(){
     this.node.playerList = null;
     this.button_betStateCode = null;
     this.show();
-    this.setBetButtonState(BetState.STATE_BET);//初始化押注按钮为开始下注
+    this.setBetButtonState(BetState.STATE_NOOPENROOM);//初始化押注按钮为开始下注
     this.resetCard();
 }
 M.resetCard = function(){
@@ -49,7 +50,7 @@ M.resetCard = function(){
 M.keyDown = function(event){
     console.log('keydownCode'+event.keyCode,'mybindKeycode:'+G.USER.keyBind.cin);
     if(event.keyCode == G.USER.keyBind.cin){
-        this.requestLookCard();
+        this.checkLookCardData();
     }
 }
 M.setStateText = function(str){
@@ -64,7 +65,7 @@ M.inistancePlayerList = function(){
     tempNode.parent = this.node.mainNode;
     tempNode.active = true;
 }
-M.lookCard = function(cardCode){
+M.lookCard = function(cardCode,isToast = true){
     let id = Number(cardCode.substr(0,2))-1;//除法向下取整减一
     let cardLayoutNum = G.USER.choose_gameID === 0?3:2;
     if(id < 0 || id > G.GAME[G.USER.choose_gameID].region * cardLayoutNum-1){
@@ -77,7 +78,9 @@ M.lookCard = function(cardCode){
     if(this.node.playerList && this.node.playerList[areaID] && this.node.playerList[areaID].getChildByName('cardlayout').children[targetID]){
         let targetNode = this.node.playerList[areaID].getChildByName('cardlayout').children[targetID];
         if(targetNode.getComponent(cc.Sprite).spriteFrame.name !== 'base'){
-            this.frame.common.toast.show('牌已翻开过,数据错误!序号:'+areaID+'下标:'+targetID);
+            if(isToast){
+                this.frame.common.toast.show('牌已翻开过,数据错误!序号:'+areaID+'下标:'+targetID);
+            }
             return;
         }
         let cardColor = Number(cardCode.substr(2,1));
@@ -97,19 +100,8 @@ M.lookCard = function(cardCode){
 }
 M.hide = function(){
 }
-M.requestOpenCard = function(){
-    G.NETWORK.request('get','/game/open',{},null,(success)=>{
-        if(success.code === 200){
-            setTimeout(()=>{
 
-            },3000);
-            return; 
-        }
-    },(failed)=>{
-        this.frame.common.toast.show(failed.message);
-    });  
-}
-M.requestLookCard = function(){
+M.checkLookCardData = function(){
     if(this.node.cardCode.string.length === 0){
         this.frame.common.toast.show('清输入需要识别的牌型编号');
         return;
@@ -121,50 +113,28 @@ M.requestLookCard = function(){
     let requestData = {
         card_number:this.node.cardCode.string
     }
-    G.NETWORK.request('post','/game/watching',requestData,null,(success)=>{
-        if(success.code === 200){
-            this.lookCard(this.node.cardCode.string);//解析牌翻牌
-            return; 
-        }
-    },(failed)=>{
-        this.frame.common.toast.show(failed.message);
-    });  
+    this.frame.logic.scene.requestLookCard(requestData);
 }
 M.checkAllCardIslooked = function()
 {
-    this.node.playerList.forEach((item,key) => {
-        let cardLayout = item.getChildByName('cardlayout').children;
-        cardLayout.forEach((citem,ckey)=>{
-            if(citem.getComponent(cc.Sprite).spriteFrame.name === 'base'){
-                return false;
+    if(this.node.playerList && Array.isArray(this.node.playerList)){
+        for(let i = 0;i < this.node.playerList.length;++i){
+            let cardLayout = this.node.playerList[i].getChildByName('cardlayout').children;
+            for(let k = 0;k< cardLayout.length;++k){
+                if(cardLayout[k].getComponent(cc.Sprite).spriteFrame.name == 'base'){
+                    return false;
+                }
             }
-        },this);
-    });
+        }
+    }
     return true;
-}
-M.requestBeting = function(){
-    G.NETWORK.request('get','/dealer/game/betting',{},null,(success)=>{
-        if(success.code === 200){
-            this.setBetButtonState(BetState.STATE_BETING);//请求成功变为押注中
-            return; 
-        }
-    },(failed)=>{
-        this.frame.common.toast.show(failed.message);
-    });  
-}
-M.requestSettleMent = function(){
-    G.NETWORK.request('get','/dealer/game/settlement',{},null,(success)=>{
-        if(success.code === 200){
-            this.resetCard();
-            this.setBetButtonState(BetState.STATE_BET);//请求成功变为押注中
-            return; 
-        }
-    },(failed)=>{
-        this.frame.common.toast.show(failed.message);
-    });
 }
 M.setBetButtonState = function(BetStateCode){
     switch(BetStateCode){
+        case BetState.STATE_NOOPENROOM:{
+            this.node.button_beting.comp.interactable = false;
+            this.node.button_beting.label.string = '开始押注';
+        }break;
         case BetState.STATE_BET:{
             this.node.button_beting.comp.interactable = true;
             this.node.button_beting.label.string = '开始押注';
@@ -175,6 +145,10 @@ M.setBetButtonState = function(BetStateCode){
         }break;
         case BetState.STATE_OPENCARD:{
             this.node.button_beting.comp.interactable = true;
+            this.node.button_beting.label.string = '确认开牌';
+        }break;
+        case BetState.STATE_NOOPENCARD:{
+            this.node.button_beting.comp.interactable = false;
             this.node.button_beting.label.string = '确认开牌';
         }break;
     } 
@@ -200,13 +174,26 @@ M.addEvent = function(){
         this.frame.view.popup.quit.show();
     },this);
     this.node.endgame_show.on('touchend',()=>{
-        this.frame.view.popup.endGame.show();
+        if(this.frame.logic.scene.RoomState === RoomState.ROOM_END){
+            this.frame.view.popup.endGame.show();
+        }else if(this.frame.logic.scene.RoomState === RoomState.ROOM_NOT_OPEN){
+            this.frame.common.toast.show('没有开始的游戏,不需要结束!');
+        }else{
+            this.frame.common.toast.show('请等待当前游戏结束!');
+        } 
+    },this);
+    this.node.button_gameStart.on('touchend',()=>{
+        if(this.button_betStateCode === BetState.STATE_NOOPENROOM || this.frame.logic.scene.RoomState === RoomState.ROOM_NOT_OPEN){
+            this.frame.logic.scene.requestStartGame();
+        }else{
+            this.frame.common.toast.show('游戏已开始，请勿重复操作!');
+        }
     },this);
     this.node.button_beting.root.on('touchend',()=>{
         if(this.button_betStateCode!== null && this.button_betStateCode !== undefined){
             switch(this.button_betStateCode){
-                case BetState.STATE_BET:this.requestBeting();break;
-                case BetState.STATE_OPENCARD:this.requestOpenCard();break;
+                case BetState.STATE_BET:this.frame.logic.scene.requestBeting();break;
+                case BetState.STATE_OPENCARD:this.checkAllCardIslooked()?this.frame.logic.scene.requestOpenCard():this.frame.common.toast.show('请先完成所有区域发牌!');break;
             }
         }
     },this);

@@ -5,9 +5,13 @@ function Uint8ArrayToString(fileData){
     }
     return dataString
   }
-  function ajax(method, url, params,progressFunction) {
+  function ajax(method, url, params,progressFunction,Host) {
     if (url !== '') {
-      url = G.NETWORK.HTTP + url
+      if(Host){
+        url = Host + url;
+      }else{
+        url = G.NETWORK.HTTP + url
+      }   
     }
     const token = cc.sys.localStorage.getItem('token');
     return new Promise((resolve, reject) => {
@@ -17,6 +21,7 @@ function Uint8ArrayToString(fileData){
       xhr.timeout = G.NETWORK.httpOutTimer*1000;
       //函数绑定
       xhr.onload = function(){
+        console.log(xhr.responseText);
         if (xhr.status === 200) {
           resolve(JSON.parse(xhr.responseText))
         }else{

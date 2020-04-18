@@ -47,6 +47,7 @@ cc.Class({
         this.frame.gamePrefab = G.USER.choose_gameID === 0?this.sgListPrefab:this.pairListPrefab;//传入主预制体
         this.frame.node = this.node;
         this.init();
+        webSocket.gameMessage = this.onMessage.bind(this);
     },
     init(){
         for (let key in frame.common) {
@@ -70,8 +71,13 @@ cc.Class({
             this.frame.view.base.notice.addText("这是一个通知的测试用于测试可用性");
         },2000);
     },
+    //消息转发器
     onMessage(code,data){
         console.log('passport网络消息(websocket)',code,data);
+        switch(code){
+            case 'game':this.frame.logic.scene.onMessage(data);break;
+            default:console.log('WARING 消息:'+code+" 内容:"+JSON.stringify(data)+" 未设置消息转发!");
+        } 
     },
     update (dt) {
         //每帧脚本供给

@@ -30,12 +30,20 @@ M.hide = function(){
 }
 M.request = function(){
     //网络请求
-    webSocket.close();
-    G.NETWORK.request('get','/dealer/logout');
-    this.frame.common.loading.show('正在退出登录...',1000,false,true,()=>{
-        cc.sys.localStorage.removeItem('token');
-        cc.director.loadScene('passport');
-    })
+    G.NETWORK.request('post','/dealer/logout',{},null,(success)=>{
+        console.log(success);
+        if(success.code === 200){
+            webSocket.close();
+            this.frame.common.loading.show('正在退出登录...',1000,false,true,()=>{
+                cc.sys.localStorage.removeItem('token');
+                cc.director.loadScene('passport');
+            })
+        }else{
+            this.frame.common.toast.show(success.message);
+        } 
+    },(failed)=>{
+        this.frame.common.toast.show(failed.message);
+    });
 }
 M.addEvent = function(){
     this.node.button_cancle.on('touchend',()=>{

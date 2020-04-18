@@ -34,8 +34,7 @@ M.request = function(){
         return;
     }
     //网络请求
-    this.frame.common.toast.show('操作已成功!');
-    this.hide();
+    this.frame.logic.scene.requestGameEnd();
 }
 M.addEvent = function(){
     this.node.button_cancle.on('touchend',()=>{

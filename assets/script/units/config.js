@@ -19,7 +19,7 @@ var G = {
     * @param {function} failed 失败的回调函数
     * @param {function} progressFunction 上传进度回调(原生平台不支持)
     */
-    request: function(method, url, params,common,callback = null, failed = null,progressFunction = null) {
+    request: function(method, url, params,common,callback = null, failed = null,progressFunction = null,host = false) {
       if( (typeof callback !== 'function' && callback !== null)|| (typeof failed !== 'function' && failed !== null)){
         return;
       }
@@ -27,7 +27,7 @@ var G = {
       if(common && common.loading){
         common.loading.show('',G.NETWORK.httpOutTimer*1000);
       }
-      ajax(method, url, params,progressFunction)
+      ajax(method, url, params,progressFunction,host)
         .then(res => {
           console.log('request success',res);
           if(common && common.loading){
@@ -201,19 +201,80 @@ var G = {
  * @readonly
  */
 const BetState = cc.Enum({
+   /**
+  * @description 游戏未开
+  * @type {number} 
+ */
+  STATE_NOOPENROOM:0,
   /**
   * @description 开始押注
   * @type {number} 
  */
-  STATE_BET:0,
+  STATE_BET:1,
  /**
   * @description 押注中
   * @type {number} 
  */
-  STATE_BETING:1,
+  STATE_BETING:2,
   /**
   * @description 确认开牌
   * @type {number} 
  */
-  STATE_OPENCARD:2
+  STATE_OPENCARD:3,
+   /**
+  * @description 确认开牌但不可点击
+  * @type {number} 
+ */
+  STATE_NOOPENCARD:4
+});
+/**
+ * @description:房间状态码枚举
+ * @readonly
+ */
+const RoomState = cc.Enum({
+  /**
+  * @description 未进入房间
+  * @type {number} 
+ */
+ ROOM_NOT_JOIN:0,
+ /**
+  * @description 房间未开
+  * @type {number} 
+ */
+ ROOM_NOT_OPEN:1,
+  /**
+  * @description 洗牌中
+  * @type {number} 
+ */
+ ROOM_SHUFFLE:2,
+  /**
+  * @description 开始押注
+  * @type {number} 
+ */
+ ROOM_START_BET:3,
+  /**
+  * @description 停止押注
+  * @type {number} 
+ */
+ ROOM_STOP_BET:4,
+  /**
+  * @description 看牌中
+  * @type {number} 
+ */
+ ROOM_SEE_CARD:5,
+  /**
+  * @description 确认开牌
+  * @type {number} 
+ */
+ ROOM_CONFIRM_OPEN:6,
+  /**
+  * @description 结算中
+  * @type {number} 
+ */
+ ROOM_SETTLEMENT:7,
+  /**
+  * @description 本局结束
+  * @type {number} 
+ */
+ ROOM_END:8,
 });

@@ -19,7 +19,7 @@ M.reset = function(){
     this.choose_gameID = null;
     this.node.root.active = true;
     this.gameList = [];
-    G.NETWORK.request('get','/dealer/category',{},this.frame.common,(success)=>{
+    G.NETWORK.request('get','/dealer/category',{},null,(success)=>{
         if(success.code === 200){
             G.GAME = success.data;
             G.GAME.forEach((item)=>{
