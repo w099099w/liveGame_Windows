@@ -17,22 +17,59 @@ M.reset = function(){
         '结算中',
         '本局结束',
     ]
+    this.tempID = 0;
+    this.tempArr = [];
     this.RoomState = null;
     this.requestState();
 }
 M.start = function(){
    
 }
+M.autoOpenCard = function(){
+    if(this.RoomState !== RoomState.ROOM_SEE_CARD){
+        this.frame.common.toast.show('非看牌状态不可看牌,请稍后!');
+        return;
+    }
+    this.tempID++;
+    if(!this.frame.view.base.home.checkAllCardIslooked()){
+        this.o = true;
+    }
+    let cardValue = '';
+    do{
+        let id = this.tempID;
+        id = id < 10?String('0'+id):String(id);
+        let cardColor = Math.round(Math.random()*5)+5;
+        if(cardColor == 9){
+            cardValue  = id + String(1000);
+        }else if(cardColor == 10){
+            cardValue  = id + String(2000);
+        }else{
+            cardValue  = id+String(cardColor);
+            let card_number = Math.round(Math.random()*12)+1;
+            card_number = card_number < 10?String('0'+(card_number*10)):String(card_number*10);
+            cardValue += card_number;
+        }
+        if(cardValue.length !== 6){
+            console.log('数据错误:'+cardValue);
+        }
+    }while(this.tempArr.includes(cardValue.substr(2,4)));
+    this.tempArr.push(cardValue.substr(2,4));
+    let requestData = {
+        card_number:cardValue
+    }
+    this.requestLookCard(requestData);
+}
 M.onMessage = function(data){
-   if(this.close){
+    if(this.close){
        return;
-   }
+    }
     if(data && data.type === G.GAME[G.USER.choose_gameID].id){
         let state = data.stage;
         console.log('游戏状态',this.roomStateStr[state]);
         switch(state){
-            case RoomState.ROOM_START_BET:this.frame.view.base.home.setStateText('下注倒计时: '+data.countdown);break;
+            case RoomState.ROOM_START_BET:this.frame.view.base.home.setStateText('押注倒计时: '+data.countdown);break;
             case RoomState.ROOM_CONFIRM_OPEN:this.frame.view.base.home.setStateText('开牌倒计时: '+data.countdown);break;
+            case RoomState.ROOM_SETTLEMENT:this.frame.view.base.home.setStateText('结算倒计时:'+data.countdown);break;
             case RoomState.ROOM_STOP_BET:this.frame.view.base.home.setStateText('停止押注');break;
             case RoomState.ROOM_END:this.frame.view.base.home.setStateText('结束倒计时: '+data.countdown);break;
         }
@@ -69,13 +106,23 @@ M.flushOpenCard = function(data){
                     if(id < 10){
                         id = String('0'+id);
                     }
-                    console.log(id);
                     let card_number = String(id+citem);
                     this.frame.view.base.home.lookCard(card_number,false);
                 }
             });
         } 
     })
+    if(this.o){
+        setTimeout(()=>{
+            if(this.frame.view.base.home.checkAllCardIslooked()){
+                this.tempID = 0;
+                this.tempArr = [];
+                this.o = false;
+                return;
+            }
+            this.autoOpenCard();
+        },1000);
+    }
 }
 /**@description 设置下注按键状态*/
 M.setBetButton = function(stateCode){
@@ -123,12 +170,11 @@ M.requestBeting = function(){
 }
 /**@description 牌型录入按键绑定进行的网络请求*/
 M.requestLookCard = function(requestData){
-    G.NETWORK.request('post','/dealer/game/watching',requestData,null,(success)=>{
-        if(success.code === 200){
-            //this.frame.view.base.home.lookCard(requestData.card_number);//解析牌翻牌
-            return; 
-        }
-    },(failed)=>{
+    if(this.RoomState !== RoomState.ROOM_SEE_CARD){
+        this.frame.common.toast.show('非看牌状态不可看牌,请稍后!');
+        return;
+    }
+    G.NETWORK.request('post','/dealer/game/watching',requestData,null,(success)=>{},(failed)=>{
         this.frame.common.toast.show(failed.message);
     });  
 }
@@ -145,8 +191,8 @@ M.requestSettleMent = function(){
     },null,"http://live.go.com");
 }
 /**@description 关闭自动开始网络请求*/
-M.requestGameEnd = function(){
-    G.NETWORK.request('post','/dealer/game/gameover',{},null,(success)=>{
+M.requestGameEnd = function(requestData){
+    G.NETWORK.request('post','/dealer/game/gameover',requestData,null,(success)=>{
         if(success.code == 200){
             this.frame.common.toast.show('操作已成功!');
             this.frame.view.popup.endGame.hide();

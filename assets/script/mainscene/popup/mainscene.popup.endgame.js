@@ -34,7 +34,10 @@ M.request = function(){
         return;
     }
     //网络请求
-    this.frame.logic.scene.requestGameEnd();
+    let requestData = {
+        password:this.node.inputPassword.string,
+    }
+    this.frame.logic.scene.requestGameEnd(requestData);
 }
 M.addEvent = function(){
     this.node.button_cancle.on('touchend',()=>{

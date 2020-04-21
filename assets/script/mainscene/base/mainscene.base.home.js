@@ -90,9 +90,11 @@ M.lookCard = function(cardCode,isToast = true){
         if(cardName){
             targetNode.runAction(cc.sequence(cc.scaleTo(0.2, 0, 1), cc.scaleTo(0.2, 1, 1),cc.callFunc(()=>{
                 targetNode.getComponent(cc.Sprite).spriteFrame = this.frame.common.loadAtlas.getSpriteFrame('card',cardName);
-                if(this.checkAllCardIslooked()){
-                    this.setBetButtonState(BetState.STATE_OPENCARD);
-                }
+                setTimeout(()=>{
+                    if(this.checkAllCardIslooked()){
+                        this.setBetButtonState(BetState.STATE_OPENCARD);
+                    }
+                },50);
             })),this);
             this.node.cardCode.string = '';
         }
