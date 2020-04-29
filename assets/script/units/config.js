@@ -1,8 +1,35 @@
+const NETWORKTYPE = cc.Enum({
+  /**
+  * @description 公网IP
+  * @type {number} 
+ */
+  NETWORK_PUBLIC:0,
+ /**
+  * @description 内网IP
+  * @type {number} 
+ */
+  NETWORK_INLINE:1,
+});
+
+let IPARRAY = [
+  {
+    SPEICALHTTP:"http://service1.df8189.com",
+    HTTP:"http://service2.df8189.com",
+    WS: "ws://47.57.114.45:9502"
+  },
+  {
+    SPEICALHTTP:"http://live.go.com",
+    HTTP:"http://live.php.com",
+    WS: "ws://192.168.8.120:9502"
+  }
+];
+//网络控制
+let netWorkSelected = NETWORKTYPE.NETWORK_PUBLIC; 
 var G = {
   NETWORK: {
-    //HTTP:cc.sys.isNative?"http://192.168.8.120":'http://live.php.com', //http服务器根地址
-    HTTP:"http://live.php.com",
-    WS: "ws://192.168.8.120:9502", //websocket服务器地址
+    SPEICALHTTP:IPARRAY[netWorkSelected].SPEICALHTTP,
+    HTTP:IPARRAY[netWorkSelected].HTTP,
+    WS: IPARRAY[netWorkSelected].WS, //websocket服务器地址
     httpOutTimer:20,
     clientID:null,//客户端本次连接ID
     isHeartBeat: true, //是否开启心跳
@@ -23,20 +50,20 @@ var G = {
       if( (typeof callback !== 'function' && callback !== null)|| (typeof failed !== 'function' && failed !== null)){
         return;
       }
-      console.log('XMLHttpRequest数据',method, url,params);
+      console.log(method+'request',url, params);
       if(common && common.loading){
         common.loading.show('',G.NETWORK.httpOutTimer*1000);
       }
       ajax(method, url, params,progressFunction,host)
         .then(res => {
-          console.log('request success',res);
+          console.log(method+'request success');
           if(common && common.loading){
             common.loading.hide();
           }
           callback?callback(res?res:null):{};
         })
         .catch(error => {
-          console.log('request failed',error);
+          console.log(method+'request failed');
           if(common && common.loading){
             common.loading.hide();
           }

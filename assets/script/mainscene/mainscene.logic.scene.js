@@ -57,6 +57,7 @@ M.autoOpenCard = function(){
     let requestData = {
         card_number:cardValue
     }
+    console.log('自动翻牌码:'+cardValue);
     this.requestLookCard(requestData);
 }
 M.onMessage = function(data){
@@ -73,12 +74,16 @@ M.onMessage = function(data){
             case RoomState.ROOM_STOP_BET:this.frame.view.base.home.setStateText('停止押注');break;
             case RoomState.ROOM_END:this.frame.view.base.home.setStateText('结束倒计时: '+data.countdown);break;
         }
+        //庄家发送控制
+        if(state === RoomState.ROOM_STOP_BET && data.countdown === 3){
+            this.requestBankerInfo();
+        }
         //游戏结束时间为0重置牌面
         if(state === RoomState.ROOM_END && data.countdown === 0){
             this.frame.view.base.home.resetCard();//状态变为游戏结束重置牌
         }
-        //状态显示
-        if(this.roomStateStr && this.roomStateStr[state] && state !== RoomState.ROOM_START_BET && data.countdown === 0){
+        //状态过滤显示
+        if(this.roomStateStr && this.roomStateStr[state] && state !== RoomState.ROOM_CONFIRM_OPEN && state !== RoomState.ROOM_START_BET && data.countdown === 0){
             this.frame.view.base.home.setStateText(this.roomStateStr[state]);
         }
         //翻牌
@@ -96,13 +101,14 @@ M.onMessage = function(data){
 }
 //webSocket刷新所有牌
 M.flushOpenCard = function(data){
+    let cardLayoutNum = G.USER.choose_gameID === 0?3:2;
     let cardLayoutData = JSON.parse(data);
     cardLayoutData.forEach((item)=>{
         let cardValue = item.cards.split(',');
         if(cardValue && Array.isArray(cardValue) && cardValue.length !== 0){
             cardValue.forEach((citem,ckey)=>{
                 if(citem != 0){
-                    let id = ((item.region-1)*3+ckey+1);
+                    let id = ((item.region-1)*cardLayoutNum+ckey+1);
                     if(id < 10){
                         id = String('0'+id);
                     }
@@ -168,6 +174,14 @@ M.requestBeting = function(){
         this.frame.common.toast.show(failed.message);
     });  
 }
+/**@description 倒计时结束后进行游戏结算网络请求*/
+M.requestBankerInfo= function(){
+    G.NETWORK.request('post',G.USER.choose_gameID === 0?'/foo/sg/banker':'/foo/pair/banker',{},null,(success)=>{
+        console.log('庄家信息返回',success);
+    },(failed)=>{
+        this.frame.common.toast.show(failed.message);
+    },null,G.NETWORK.SPEICALHTTP);
+}
 /**@description 牌型录入按键绑定进行的网络请求*/
 M.requestLookCard = function(requestData){
     if(this.RoomState !== RoomState.ROOM_SEE_CARD){
@@ -186,9 +200,9 @@ M.requestOpenCard = function(){
 }
 /**@description 倒计时结束后进行游戏结算网络请求*/
 M.requestSettleMent = function(){
-    G.NETWORK.request('post','/foo/sg/settle',{},null,(success)=>{},(failed)=>{
+    G.NETWORK.request('post',G.USER.choose_gameID ===  0?'/foo/sg/settle':'/foo/pair/settle',{},null,(success)=>{},(failed)=>{
         this.frame.common.toast.show(failed.message);
-    },null,"http://live.go.com");
+    },null,G.NETWORK.SPEICALHTTP);
 }
 /**@description 关闭自动开始网络请求*/
 M.requestGameEnd = function(requestData){

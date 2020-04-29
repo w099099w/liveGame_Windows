@@ -189,7 +189,7 @@
       "array": [
         0,
         0,
-        359.4005425705421,
+        935.3074360871938,
         0,
         0,
         0,
@@ -548,7 +548,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        734.4,
+        699.116,
         0,
         0,
         0,
@@ -602,8 +602,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 146,
-      "height": 46
+      "width": 200,
+      "height": 55
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -614,7 +614,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        123.84,
+        150.414,
         0,
         0,
         0,
@@ -664,8 +664,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 146,
-      "height": 50.4
+      "width": 200,
+      "height": 55
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -752,7 +752,7 @@
       "__uuid__": "7b40d1a6-708f-4701-bdb6-d44273aa1512"
     },
     "_type": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -2752,8 +2752,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "自动翻牌",
-    "_N$string": "自动翻牌",
+    "_string": "随机翻牌",
+    "_N$string": "随机翻牌",
     "_fontSize": 36,
     "_lineHeight": 36,
     "_enableWrapText": true,

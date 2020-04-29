@@ -71,9 +71,15 @@ function Uint8ArrayToString(fileData){
         if (token) {
           xhr.setRequestHeader('Authorization', 'Bearer ' + token)
         }
-        
-        xhr.setRequestHeader('Content-Type', 'application/json')
-        xhr.send(JSON.stringify(params))
+        if(cc.sys.localStorage.getItem('sendType') == 'BIN'){
+          console.log('二进制文件发送');
+          cc.sys.localStorage.setItem('sendType','JSON');
+          xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+          xhr.send(params);
+        }else{
+          xhr.setRequestHeader('Content-Type', 'application/json')
+          xhr.send(JSON.stringify(params))
+        }
       }else if (method === 'delete' || method === 'DELETE') {
         xhr.open(method, url, true)
         if (token) {
@@ -86,18 +92,8 @@ function Uint8ArrayToString(fileData){
         if (token) {
           xhr.setRequestHeader('Authorization', 'Bearer ' + token)
         }
-        if(cc.sys.localStorage.getItem('sendType') == 'BIN'){
-          let sBoundary = '----WebKitFormBoundaryrGKCBY7qhFd3TrwA';
-          console.log('发送头像');
-          cc.sys.localStorage.setItem('sendType','JSON');//恢复默认发送流
-          xhr.setRequestHeader('Content-Type', 'multipart/form-data;boundary='+sBoundary);
-          let formData = '------WebKitFormBoundaryrGKCBY7qhFd3TrwA'+'\r\n'+'Content-Disposition: form-data; name="avatar"; filename="user.jpg"'+'\r\n'+'Content-Type: application/octet-stream'+'\r\n\r\n'+Uint8ArrayToString(params)+'\r\n'+'------WebKitFormBoundaryrGKCBY7qhFd3TrwA--';
-          console.log("实体",formData);
-          xhr.send(formData);
-        }else{
-          xhr.setRequestHeader('Content-Type', 'application/json')
-          xhr.send(JSON.stringify(params))
-        }
+        xhr.setRequestHeader('Content-Type', 'application/json')
+        xhr.send(JSON.stringify(params))
       }
     })
   }

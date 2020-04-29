@@ -71,7 +71,6 @@ M.lookCard = function(cardCode,isToast = true){
     if(id < 0 || id > G.GAME[G.USER.choose_gameID].region * cardLayoutNum-1){
         return;
     }
-
     let areaID = Math.floor(id/cardLayoutNum);
     let targetID = id%cardLayoutNum;
     
