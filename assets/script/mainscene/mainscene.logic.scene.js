@@ -202,6 +202,7 @@ M.requestLookCard = function(requestData){
         return;
     }
     G.NETWORK.request('post','/dealer/game/watching',requestData,null,(success)=>{
+        console.log(success)
         this.frame.common.toast.show('开牌成功!',false);
     },(failed)=>{
         this.frame.common.toast.show(failed.message);

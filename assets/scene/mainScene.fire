@@ -2553,7 +2553,7 @@
         "__id__": 54
       }
     ],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 59
@@ -5369,7 +5369,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 160,
+      "width": 0,
       "height": 50.4
     },
     "_anchorPoint": {
