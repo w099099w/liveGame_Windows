@@ -92,6 +92,8 @@ M.lookCard = function(cardCode,isToast = true){
                 setTimeout(()=>{
                     if(this.checkAllCardIslooked()){
                         this.setBetButtonState(BetState.STATE_OPENCARD);
+                        this.setFoucs(false);
+                        this.node.cardCode.string = '';
                     }else{
                         this.setFoucs(false);
                         this.node.cardCode.string = '';
@@ -193,7 +195,7 @@ M.addEvent = function(){
         this.frame.view.popup.quit.show();
     },this);
     this.node.endgame_show.on('touchend',()=>{
-        if(this.frame.logic.scene.RoomState === RoomState.ROOM_END){
+        if(this.frame.logic.scene.RoomState === RoomState.ROOM_END || this.frame.logic.scene.RoomState === RoomState.ROOM_SHUFFLE){
             this.frame.view.popup.endGame.show();
         }else if(this.frame.logic.scene.RoomState === RoomState.ROOM_NOT_OPEN){
             this.frame.common.toast.show('没有开始的游戏,不需要结束!');
@@ -217,18 +219,14 @@ M.addEvent = function(){
         }
     },this);
     this.node.cardCode.node.on('editing-did-began',()=>{
-       console.log('开始键入!');
        if(this.frame.logic.scene.RoomState !== RoomState.ROOM_SEE_CARD){
-           console.log('修改为false')
            setTimeout(()=>{
             this.setFoucs(false);
            },30);
        }
     },this);
     this.node.cardCode.node.on('text-changed',()=>{
-        console.log('实时长度检测',this.node.cardCode.string.length);
         if(this.node.cardCode.string.length == 6){
-            console.log('变更焦点');
             this.setFoucs(false);
         }
      },this);

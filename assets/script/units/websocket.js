@@ -26,10 +26,6 @@ webSocket.create = function(url,loading) {
 
 webSocket.onopen = function(){
   console.log('连接ws服务器成功==========')
-  const token = cc.sys.localStorage.getItem('token');
-  if(G.NETWORK.clientID && token){
-    G.NETWORK.request('post','/dealer/game/reconnect',{client_id:Number(G.NETWORK.clientID)});
-  }
   this.sendTimer = true;
   if(G.NETWORK.isHeartBeat){
     if(!G.NETWORK.heart_Time > 0){
@@ -149,6 +145,10 @@ webSocket.onMessage = function(event) {
            this.sendTimer = true;
            return;
         }else if(msg.code === 'init'){
+            const token = cc.sys.localStorage.getItem('token');
+            if(G.NETWORK.clientID && token){
+              G.NETWORK.request('post','/dealer/game/reconnect',{client_id:Number(msg.data.info)});
+            }
             G.NETWORK.clientID = msg.data.info;
             this.loading.hide();
             return;

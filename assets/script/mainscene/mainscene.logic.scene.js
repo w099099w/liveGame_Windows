@@ -75,8 +75,9 @@ M.onMessage = function(data){
             case RoomState.ROOM_END:this.frame.view.base.home.setStateText('结束倒计时: '+data.countdown);break;
         }
         //庄家发送控制
-        if(state === RoomState.ROOM_STOP_BET && data.countdown === 3){
+        if(state === RoomState.ROOM_START_BET && data.countdown === 0){
             this.requestBankerInfo();
+            this.frame.common.toast.show('停止押注!',false);
         }
         //游戏结束时间为0重置牌面
         if(state === RoomState.ROOM_END && data.countdown === 0){
@@ -173,13 +174,16 @@ M.requestState = function(){
 M.requestStartGame = function(){
     this.close = false;
     G.NETWORK.request('post','/dealer/game/wash',{},null,(success)=>{
+        this.frame.common.toast.show('游戏开始!',false);
     },(failed)=>{
         this.frame.common.toast.show(failed.message);
     });  	
 }
 /**@description 游戏开始时点击开始下注的网络请求*/
 M.requestBeting = function(){
-    G.NETWORK.request('post','/dealer/game/betting',{},null,(success)=>{},(failed)=>{
+    G.NETWORK.request('post','/dealer/game/betting',{},null,(success)=>{
+        this.frame.common.toast.show('开始押注!',false);
+    },(failed)=>{
         this.frame.common.toast.show(failed.message);
     });  
 }
@@ -197,19 +201,25 @@ M.requestLookCard = function(requestData){
         this.frame.common.toast.show('非看牌状态不可看牌,请稍后!');
         return;
     }
-    G.NETWORK.request('post','/dealer/game/watching',requestData,null,(success)=>{},(failed)=>{
+    G.NETWORK.request('post','/dealer/game/watching',requestData,null,(success)=>{
+        this.frame.common.toast.show('开牌成功!',false);
+    },(failed)=>{
         this.frame.common.toast.show(failed.message);
     });  
 }
 /**@description 所有牌录入完成后进行的网络请求成功后3秒进行结算请求*/
 M.requestOpenCard = function(){
-    G.NETWORK.request('post','/dealer/game/open',{},null,(success)=>{},(failed)=>{
+    G.NETWORK.request('post','/dealer/game/open',{},null,(success)=>{
+        this.frame.common.toast.show('开牌成功!',false);
+    },(failed)=>{
         this.frame.common.toast.show(failed.message);
     });  
 }
 /**@description 倒计时结束后进行游戏结算网络请求*/
 M.requestSettleMent = function(){
-    G.NETWORK.request('post',G.USER.choose_gameID ===  0?'/foo/sg/settle':'/foo/pair/settle',{},null,(success)=>{},(failed)=>{
+    G.NETWORK.request('post',G.USER.choose_gameID ===  0?'/foo/sg/settle':'/foo/pair/settle',{},null,(success)=>{
+        this.frame.common.toast.show('结算完成!',false);
+    },(failed)=>{
         this.frame.common.toast.show(failed.message);
     },null,G.NETWORK.SPEICALHTTP);
 }
