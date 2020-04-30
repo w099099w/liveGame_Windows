@@ -28,7 +28,7 @@ webSocket.onopen = function(){
   console.log('连接ws服务器成功==========')
   const token = cc.sys.localStorage.getItem('token');
   if(G.NETWORK.clientID && token){
-    G.NETWORK.request('put','/foo/reconnection',{client_id:String(G.NETWORK.clientID)});
+    G.NETWORK.request('post','/dealer/game/reconnect',{client_id:Number(G.NETWORK.clientID)});
   }
   this.sendTimer = true;
   if(G.NETWORK.isHeartBeat){

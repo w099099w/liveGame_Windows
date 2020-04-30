@@ -86,17 +86,19 @@ M.onMessage = function(data){
         if(this.roomStateStr && this.roomStateStr[state] && state !== RoomState.ROOM_CONFIRM_OPEN && state !== RoomState.ROOM_START_BET && data.countdown === 0){
             this.frame.view.base.home.setStateText(this.roomStateStr[state]);
         }
-        //翻牌
-        if(state === RoomState.ROOM_SEE_CARD){
-            if(data.info.length !== 0){
-                this.flushOpenCard(data.info);
-            }
-        }
+       
         //状态控制
         if(state === RoomState.ROOM_SETTLEMENT && data.countdown !== 0){
             return;
         }
         this.setBetButton(state);
+        //翻牌
+        if(state === RoomState.ROOM_SEE_CARD){
+            this.frame.view.base.home.setFoucs(true);
+            if(data.info.length !== 0){
+                this.flushOpenCard(data.info);
+            }
+        }
     }     
 }
 //webSocket刷新所有牌
@@ -148,10 +150,17 @@ M.requestState = function(){
             if(this.roomStateStr && this.roomStateStr[success.data.gameStatus]){
                 this.frame.view.base.home.setStateText(this.roomStateStr[success.data.gameStatus]);//设置状态显示
                 this.setBetButton(success.data.gameStatus);//设置按键状态
+                this.RoomState = Number(success.data.gameStatus);
                 if(success.data.gameStatus === RoomState.ROOM_NOT_OPEN){
                     this.close = true;
                 }else{
                     this.close = false;
+                }
+                //变更输入状态
+                if(success.data.gameStatus === RoomState.ROOM_SEE_CARD){
+                    this.frame.view.base.home.setFoucs(true);
+                }else{
+                    this.frame.view.base.home.setFoucs(false);
                 }
             }
             return; 

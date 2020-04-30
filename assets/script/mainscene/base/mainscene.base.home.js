@@ -49,7 +49,7 @@ M.resetCard = function(){
 }
 M.keyDown = function(event){
     console.log('keydownCode'+event.keyCode,'mybindKeycode:'+G.USER.keyBind.cin);
-    if(event.keyCode == G.USER.keyBind.cin){
+    if(event.keyCode == G.USER.keyBind.cin ||event.keyCode == 13){
         this.checkLookCardData();
     }
 }
@@ -92,10 +92,13 @@ M.lookCard = function(cardCode,isToast = true){
                 setTimeout(()=>{
                     if(this.checkAllCardIslooked()){
                         this.setBetButtonState(BetState.STATE_OPENCARD);
+                    }else{
+                        this.setFoucs(false);
+                        this.node.cardCode.string = '';
+                        this.setFoucs(true);
                     }
                 },50);
-            })),this);
-            this.node.cardCode.string = '';
+            })),this); 
         }
     }
 }
@@ -170,6 +173,21 @@ M.onDestroy = function(){
     }
     cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.keyDown, this);
 }
+M.setFoucs = function(bool){
+    console.log('设置输入状态',this.getFoucs(),bool);
+    if(this.getFoucs() !== bool){
+        if(bool){
+            console.log('可键入');
+            this.node.cardCode.focus();
+        }else{
+            console.log('不可键入');
+            this.node.cardCode.blur();
+        }  
+    } 
+}
+M.getFoucs = function(){
+    return this.node.cardCode.isFocused();
+}
 M.addEvent = function(){
     this.node.quit_show.on('touchend',()=>{
         this.frame.view.popup.quit.show();
@@ -198,5 +216,21 @@ M.addEvent = function(){
             }
         }
     },this);
+    this.node.cardCode.node.on('editing-did-began',()=>{
+       console.log('开始键入!');
+       if(this.frame.logic.scene.RoomState !== RoomState.ROOM_SEE_CARD){
+           console.log('修改为false')
+           setTimeout(()=>{
+            this.setFoucs(false);
+           },30);
+       }
+    },this);
+    this.node.cardCode.node.on('text-changed',()=>{
+        console.log('实时长度检测',this.node.cardCode.string.length);
+        if(this.node.cardCode.string.length == 6){
+            console.log('变更焦点');
+            this.setFoucs(false);
+        }
+     },this);
 }
 export default M;
