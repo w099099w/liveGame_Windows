@@ -56,6 +56,13 @@ cc.Class({
     },
     onMessage(code,data){
         console.log('passport网络消息(websocket)',code,data);
+        //缓存保存
+        if(code = 'game'){
+            G.USER.tempData = {
+                code:code,
+                data:data,
+            };
+        }
     },
     update (dt) {
         //每帧脚本供给

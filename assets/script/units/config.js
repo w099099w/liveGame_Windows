@@ -82,6 +82,7 @@ var G = {
     * @param {object} USER 用户配置
     */
   USER: {
+    tempData:null,
     choose_gameID:null,//选择的游戏ID
     curResolutionID:5,//默认选择的分辨率组ID
     keyBind:null,//用户设定的按键绑定

@@ -66,6 +66,11 @@ cc.Class({
         }
     },
     start () {
+        //缓存取出
+        if(G.USER.tempData){
+            this.onMessage(G.USER.tempData.code,G.USER.tempData.data);
+            G.USER.tempData = null;
+        }
         this.frame.logic.scene.start();
         setTimeout(()=>{
             this.frame.view.base.notice.addText("这是一个通知的测试用于测试可用性");
