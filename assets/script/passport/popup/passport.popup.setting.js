@@ -12,6 +12,7 @@ M.init = function(component,frame){
         stateCtrl_Label:cc.find('popup/setting/key/stateCtrl/keyCode/value',frame.node).getComponent(cc.Label),
         cinCardType_Label:cc.find('popup/setting/key/cinCardType/keyCode/value',frame.node).getComponent(cc.Label),
         button_close:cc.find('popup/setting/button_close',frame.node),
+        button_quit:cc.find('popup/setting/button_quit',frame.node),
     }
     this.reset();
     this.addEvent();
@@ -26,15 +27,36 @@ M.reset = function(){
     this.node.root.active = false;
     if(cc.sys.isNative && CC_JSB){
         this.JScontroller = new ns.JScontroller();//实例化JSB2.0绑定控制
+        if(cc.sys.localStorage.getItem('resoultion')){
+            this.saveResoultion = JSON.parse(cc.sys.localStorage.getItem('resoultion'));
+            if(this.saveResoultion.width == 1920 && this.saveResoultion.height == 1080){
+                this.JScontroller.setViewSize(1919,1079,5);
+            }else{
+                this.JScontroller.setViewSize(this.saveResoultion.width, this.saveResoultion.height,this.saveResoultion.Index);
+            }
+        }
     }
     this.resolutionList = [];
     G.RESOULTION.forEach(item=>{
         this.resolutionList.push(String(item.width)+'*'+String(item.height));
     },this);
+    if(this.saveResoultion){
+        G.USER.curResolutionID = this.saveResoultion.Index;
+    }
     this.node.input_resolution.init(this.resolutionList,G.USER.curResolutionID,(index)=>{
         G.USER.curResolutionID = index;
         if(cc.sys.isNative && CC_JSB && this.JScontroller){
-            this.JScontroller.setViewSize(G.RESOULTION[index].width,G.RESOULTION[index].height);
+            if(G.RESOULTION[index].width == 1920 && G.RESOULTION[index].height == 1080){
+                this.JScontroller.setViewSize(1919,1079,G.USER.curResolutionID);
+            }else{
+                this.JScontroller.setViewSize(G.RESOULTION[index].width,G.RESOULTION[index].height,G.USER.curResolutionID);
+            }
+            let data = {
+                width:G.RESOULTION[index].width,
+                height:G.RESOULTION[index].height,
+                Index:G.USER.curResolutionID,
+            }
+            cc.sys.localStorage.setItem('resoultion',JSON.stringify(data));
         }
     });
 }
@@ -176,6 +198,9 @@ M.addEvent = function(){
     },this);
     this.node.button_close.on('touchend',()=>{
         this.hide();
+    },this);
+    this.node.button_quit.on('touchend',()=>{
+        cc.game.end();
     },this);
 }
 export default M;

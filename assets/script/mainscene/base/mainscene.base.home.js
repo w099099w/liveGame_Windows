@@ -76,12 +76,12 @@ M.lookCard = function(cardCode,isToast = true){
     
     if(this.node.playerList && this.node.playerList[areaID] && this.node.playerList[areaID].getChildByName('cardlayout').children[targetID]){
         let targetNode = this.node.playerList[areaID].getChildByName('cardlayout').children[targetID];
-        if(targetNode.getComponent(cc.Sprite).spriteFrame.name !== 'base'){
-            if(isToast){
-                this.frame.common.toast.show('牌已翻开过,数据错误!序号:'+areaID+'下标:'+targetID);
-            }
-            return;
-        }
+        // if(targetNode.getComponent(cc.Sprite).spriteFrame.name !== 'base'){
+        //     if(isToast){
+        //         this.frame.common.toast.show('牌已翻开过,数据错误!序号:'+areaID+'下标:'+targetID);
+        //     }
+        //     return;
+        // }
         let cardColor = Number(cardCode.substr(2,1));
         let cardNum = Number(cardCode.substr(3,3))/10;
         let cardName = G.TOOL.cardValueToName(cardNum,cardColor);

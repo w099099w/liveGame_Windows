@@ -83,7 +83,7 @@ var G = {
     */
   USER: {
     choose_gameID:null,//选择的游戏ID
-    curResolutionID:0,//选择的分辨率组ID
+    curResolutionID:5,//默认选择的分辨率组ID
     keyBind:null,//用户设定的按键绑定
   },
   /**
