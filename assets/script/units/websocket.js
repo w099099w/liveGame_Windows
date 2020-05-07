@@ -188,7 +188,6 @@ webSocket.queue = {
         if (this.data.length > 0 && this.lock == false) {
             this.lock = true
             var msg = this.data.shift()
-            console.log('队列消息:'+msg.code,"数据:"+msg.data);
             webSocket.gameMessage(msg.code, msg.data)
             this.unlock();//若还有消息继续转发
         }

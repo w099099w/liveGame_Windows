@@ -191,7 +191,7 @@ M.requestBeting = function(){
 /**@description 倒计时结束后进行游戏结算网络请求*/
 M.requestBankerInfo= function(){
     G.NETWORK.request('post',G.USER.choose_gameID === 0?'/foo/sg/banker':'/foo/pair/banker',{},null,(success)=>{
-        console.log('庄家信息返回',success);
+        console.log('请求庄家信息返回');
     },(failed)=>{
         this.frame.common.toast.show(failed.message);
     },null,G.NETWORK.SPEICALHTTP);

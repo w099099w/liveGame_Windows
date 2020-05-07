@@ -50,20 +50,19 @@ var G = {
       if( (typeof callback !== 'function' && callback !== null)|| (typeof failed !== 'function' && failed !== null)){
         return;
       }
-      console.log(method+'request',url, params);
       if(common && common.loading){
         common.loading.show('',G.NETWORK.httpOutTimer*1000);
       }
       ajax(method, url, params,progressFunction,host)
         .then(res => {
-          console.log(method+'request success');
+          console.log(method+'request success',JSON.stringify(res));
           if(common && common.loading){
             common.loading.hide();
           }
           callback?callback(res?res:null):{};
         })
         .catch(error => {
-          console.log(method+'request failed');
+          console.log(method+'request failed',JSON.stringify(error));
           if(common && common.loading){
             common.loading.hide();
           }
@@ -178,7 +177,7 @@ var G = {
     * @return {string} 返回文件名称出错返回null;
     */
     cardValueToName(num,color){
-      console.log(num,color);
+      console.log('牌值转换前:',num,color);
       if(num < 0 || num > 13 || color < 1 || color > 8){
         return null;
       }
