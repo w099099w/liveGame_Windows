@@ -51,6 +51,9 @@ M.keyDown = function(event){
     console.log('keydownCode'+event.keyCode,'mybindKeycode:'+G.USER.keyBind.cin);
     if(event.keyCode == G.USER.keyBind.cin ||event.keyCode == 13){
         this.checkLookCardData();
+    }else if(event.keyCode == G.USER.keyBind.state){
+        //向节点发射事假
+       this.betButtonDown();
     }
 }
 M.setStateText = function(str){
@@ -76,15 +79,18 @@ M.lookCard = function(cardCode,isToast = true){
     
     if(this.node.playerList && this.node.playerList[areaID] && this.node.playerList[areaID].getChildByName('cardlayout').children[targetID]){
         let targetNode = this.node.playerList[areaID].getChildByName('cardlayout').children[targetID];
-        // if(targetNode.getComponent(cc.Sprite).spriteFrame.name !== 'base'){
-        //     if(isToast){
-        //         this.frame.common.toast.show('牌已翻开过,数据错误!序号:'+areaID+'下标:'+targetID);
-        //     }
-        //     return;
-        // }
         let cardColor = Number(cardCode.substr(2,1));
         let cardNum = Number(cardCode.substr(3,3))/10;
         let cardName = G.TOOL.cardValueToName(cardNum,cardColor);
+        targetNode.width = 160;
+        targetNode.height = 208;
+        if(targetNode.getComponent(cc.Sprite).spriteFrame.name !== 'base'){
+            // if(isToast){
+            //     this.frame.common.toast.show('牌已翻开过,数据错误!序号:'+areaID+'下标:'+targetID);
+            // }
+            targetNode.getComponent(cc.Sprite).spriteFrame = this.frame.common.loadAtlas.getSpriteFrame('card',cardName);
+            return;
+        }
         console.log('翻开的牌值',cardName);
         if(cardName){
             targetNode.runAction(cc.sequence(cc.scaleTo(0.2, 0, 1), cc.scaleTo(0.2, 1, 1),cc.callFunc(()=>{
@@ -190,6 +196,14 @@ M.setFoucs = function(bool){
 M.getFoucs = function(){
     return this.node.cardCode.isFocused();
 }
+M.betButtonDown = function(){
+    if(this.button_betStateCode!== null && this.button_betStateCode !== undefined){
+        switch(this.button_betStateCode){
+            case BetState.STATE_BET:this.frame.logic.scene.requestBeting();break;
+            case BetState.STATE_OPENCARD:this.checkAllCardIslooked()?this.frame.logic.scene.requestOpenCard():this.frame.common.toast.show('请先完成所有区域发牌!');break;
+        }
+    }
+}
 M.addEvent = function(){
     this.node.quit_show.on('touchend',()=>{
         this.frame.view.popup.quit.show();
@@ -211,12 +225,7 @@ M.addEvent = function(){
         }
     },this);
     this.node.button_beting.root.on('touchend',()=>{
-        if(this.button_betStateCode!== null && this.button_betStateCode !== undefined){
-            switch(this.button_betStateCode){
-                case BetState.STATE_BET:this.frame.logic.scene.requestBeting();break;
-                case BetState.STATE_OPENCARD:this.checkAllCardIslooked()?this.frame.logic.scene.requestOpenCard():this.frame.common.toast.show('请先完成所有区域发牌!');break;
-            }
-        }
+        this.betButtonDown();
     },this);
     this.node.cardCode.node.on('editing-did-began',()=>{
        if(this.frame.logic.scene.RoomState !== RoomState.ROOM_SEE_CARD){

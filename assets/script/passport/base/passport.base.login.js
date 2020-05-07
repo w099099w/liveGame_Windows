@@ -10,11 +10,21 @@ M.init = function(component,frame){
         button_login:cc.find('login/button_login',frame.node),
         button_showSet:cc.find('login/button_setting',frame.node),
         tip:cc.find('login/tip',frame.node),
+        isRemember:cc.find('login/remember',frame.node),
+        isAgree:cc.find('login/remember/isagree',frame.node),
     }
     this.reset();
     this.addEvent();
 }
 M.reset = function(){
+    if(cc.sys.localStorage.getItem('remember')){
+        this.node.isAgree.active = true;
+        let info = JSON.parse(cc.sys.localStorage.getItem('remember'));
+        this.node.input_phone.string = info.phone;
+        this.node.input_password.string = info.password;
+    }else{
+        this.node.isAgree.active = false;
+    }
     //初始化游戏列表选择
     this.choose_gameID = null;
     this.node.root.active = true;
@@ -67,6 +77,13 @@ M.request = function(){
         if(success.code === 200){
             if(success.data){
                 cc.sys.localStorage.setItem('token',success.data.token);
+                if(this.node.isAgree.active){
+                    let info = {
+                        phone:this.node.input_phone.string,
+                        password:this.node.input_password.string
+                    }
+                    cc.sys.localStorage.setItem('remember',JSON.stringify(info));
+                }
                 this.frame.common.loading.show('正在加载...',1000,false,true,()=>{
                     G.USER.choose_gameID = Number(this.choose_gameID);
                     cc.director.loadScene('mainScene');
@@ -84,6 +101,12 @@ M.addEvent = function(){
     },this);
     this.node.button_showSet.on('touchend',()=>{
         this.frame.view.popup.setting.show();
+    },this);
+    this.node.isRemember.on('touchend',()=>{
+        this.node.isAgree.active = !this.node.isAgree.active;
+        if(!this.node.isAgree.active){
+            cc.sys.localStorage.removeItem('remember');
+        }
     },this);
 }
 export default M;

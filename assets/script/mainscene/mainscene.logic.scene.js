@@ -136,7 +136,8 @@ M.flushOpenCard = function(data){
 /**@description 设置下注按键状态*/
 M.setBetButton = function(stateCode){
     switch(Number(stateCode)){
-        case RoomState.ROOM_NOT_OPEN:this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENROOM);//房间未开变为开始押注但不可点击
+        case RoomState.ROOM_CONFIRM_OPEN:this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENCARD);break//看牌倒计时也不可点击确认开牌
+        case RoomState.ROOM_NOT_OPEN:this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENROOM);break//房间未开变为开始押注但不可点击
         case RoomState.ROOM_SHUFFLE:this.frame.view.base.home.setBetButtonState(BetState.STATE_BET);break;//开始押注激活
         case RoomState.ROOM_START_BET:this.frame.view.base.home.setBetButtonState(BetState.STATE_BETING);break;//和倒计时同时下发开始压注显示压注中
         case RoomState.ROOM_SEE_CARD:this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENCARD);break; //请求成功变为确认开牌('所有牌开完自动变为确认开牌,由看牌函数lookCard调用')
@@ -206,7 +207,7 @@ M.requestLookCard = function(requestData){
         this.frame.common.toast.show('开牌成功!',false);
     },(failed)=>{
         this.frame.common.toast.show(failed.message);
-    });  
+    });
 }
 /**@description 所有牌录入完成后进行的网络请求成功后3秒进行结算请求*/
 M.requestOpenCard = function(){
