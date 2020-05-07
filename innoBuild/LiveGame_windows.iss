@@ -19,10 +19,11 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\{#MyAppName}
-DisableDirPage=yes
+DefaultDirName=C:\Program Files (x86)\{#MyAppName}
+DisableDirPage=no
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
+DisableProgramGroupPage=no
 ; [Icons] 的“quicklaunchicon”条目使用 {userappdata}，而其 [Tasks] 条目具有适合 IsAdminInstallMode 的检查。
 UsedUserAreasWarning=no
 LicenseFile=F:\PROJECT\liveGame_Windows\xuke.txt
