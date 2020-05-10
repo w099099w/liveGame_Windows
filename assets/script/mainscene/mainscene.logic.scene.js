@@ -17,7 +17,6 @@ M.reset = function(){
         '结算中',
         '本局结束',
     ]
-    this.tempID = 0;
     this.tempArr = [];
     this.RoomState = null;
     this.requestState();
@@ -30,15 +29,22 @@ M.autoOpenCard = function(){
         this.frame.common.toast.show('非看牌状态不可看牌,请稍后!');
         return;
     }
-    this.tempID++;
     if(!this.frame.view.base.home.checkAllCardIslooked()){
         this.o = true;
     }
     let cardValue = '';
     do{
-        let id = this.tempID;
+        let id = this.frame.view.base.home.calcTempID();
+        if(id == -1){
+            return;
+        }
         id = id < 10?String('0'+id):String(id);
         let cardColor = Math.round(Math.random()*5)+5;
+        if(G.USER.choose_gameID == 1){
+            do{
+                cardColor = Math.round(Math.random()*5)+5;
+            }while(cardColor == 9 || cardColor == 10);
+        }
         if(cardColor == 9){
             cardValue  = id + String(1000);
         }else if(cardColor == 10){
@@ -46,12 +52,18 @@ M.autoOpenCard = function(){
         }else{
             cardValue  = id+String(cardColor);
             let card_number = Math.round(Math.random()*12)+1;
+            if(G.USER.choose_gameID === 1){
+                do{
+                    card_number = Math.round(Math.random()*12)+1;
+                }while(card_number > 10);
+            }
             card_number = card_number < 10?String('0'+(card_number*10)):String(card_number*10);
             cardValue += card_number;
         }
         if(cardValue.length !== 6){
             console.log('数据错误:'+cardValue);
         }
+        
     }while(this.tempArr.includes(cardValue.substr(2,4)));
     this.tempArr.push(cardValue.substr(2,4));
     let requestData = {
@@ -124,7 +136,6 @@ M.flushOpenCard = function(data){
     if(this.o){
         setTimeout(()=>{
             if(this.frame.view.base.home.checkAllCardIslooked()){
-                this.tempID = 0;
                 this.tempArr = [];
                 this.o = false;
                 return;
@@ -206,6 +217,7 @@ M.requestLookCard = function(requestData){
         console.log(success)
         this.frame.common.toast.show('开牌成功!',false);
     },(failed)=>{
+        this.o = false;
         this.frame.common.toast.show(failed.message);
     });
 }

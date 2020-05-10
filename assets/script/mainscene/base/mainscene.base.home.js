@@ -112,7 +112,19 @@ M.lookCard = function(cardCode,isToast = true){
 }
 M.hide = function(){
 }
-
+M.calcTempID = function(){
+    let cardLayoutNum = G.USER.choose_gameID === 0?3:2;
+    for(let i = 0; i < this.node.playerList.length;i++){
+        let parent = this.node.playerList[i].getChildByName('cardlayout');
+        for(let k = 0; k < parent.children.length;k++){
+            let item = parent.children[k];
+            if(item.getComponent(cc.Sprite).spriteFrame.name === 'base'){
+                return i*cardLayoutNum+k+1;
+            }
+        }
+    }
+    return -1;
+}
 M.checkLookCardData = function(){
     if(this.node.cardCode.string.length === 0){
         this.frame.common.toast.show('清输入需要识别的牌型编号');

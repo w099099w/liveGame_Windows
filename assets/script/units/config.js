@@ -55,14 +55,14 @@ var G = {
       }
       ajax(method, url, params,progressFunction,host)
         .then(res => {
-          console.log(method+'request success',JSON.stringify(res));
+          console.log(url+'request success',JSON.stringify(res));
           if(common && common.loading){
             common.loading.hide();
           }
           callback?callback(res?res:null):{};
         })
         .catch(error => {
-          console.log(method+'request failed',JSON.stringify(error));
+          console.log(url+'request failed',JSON.stringify(error));
           if(common && common.loading){
             common.loading.hide();
           }

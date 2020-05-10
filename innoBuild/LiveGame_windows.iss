@@ -2,7 +2,7 @@
 ; 有关创建 Inno Setup 脚本文件的详细资料请查阅帮助文档！
 
 #define MyAppName "LiveGame_windows"
-#define MyAppVersion "1.0.4"
+#define MyAppVersion "1.0.5"
 #define MyAppPublisher "cocos creater"
 #define MyAppURL "http://www.cocos.com/"
 #define MyAppExeName "liveGame_Windows.exe"
