@@ -29,14 +29,14 @@ cc.Class({
         this.reset();
         if(isZeroActive !== false && isZeroActive !== null && array[isZeroActive]){
             this.comboLabel.string = array[isZeroActive];
-            // if(this.callback){
-            //     this.callback(isZeroActive);
-            // }
+            if(this.callback){
+                this.callback(isZeroActive);
+            }
         }else{
             this.comboLabel.string = '';
-            // if(this.callback){
-            //     this.callback(null);
-            // }
+            if(this.callback){
+                this.callback(null);
+            }
         }
         this.itemArray = array;
         this.initItems();

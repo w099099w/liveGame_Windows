@@ -32,7 +32,7 @@ InfoAfterFile=F:\PROJECT\liveGame_Windows\installed.txt
 ; 移除以下行，以在管理安装模式下运行（为所有用户安装）。
 PrivilegesRequired=lowest
 OutputDir=F:\PROJECT\liveGame_Windows\innoBuild
-OutputBaseFilename=LiveGamePC_setup
+OutputBaseFilename=LiveGamePC_{#MyAppVersion}_setup
 SetupIconFile=F:\PROJECT\liveGame_Windows\innoBuild\installed.ico
 Compression=lzma
 SolidCompression=yes

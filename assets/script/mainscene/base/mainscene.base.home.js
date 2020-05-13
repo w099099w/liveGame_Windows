@@ -89,6 +89,15 @@ M.lookCard = function(cardCode,isToast = true){
             //     this.frame.common.toast.show('牌已翻开过,数据错误!序号:'+areaID+'下标:'+targetID);
             // }
             targetNode.getComponent(cc.Sprite).spriteFrame = this.frame.common.loadAtlas.getSpriteFrame('card',cardName);
+            if(this.checkAllCardIslooked()){
+                this.setBetButtonState(BetState.STATE_OPENCARD);
+                this.setFoucs(false);
+                this.node.cardCode.string = '';
+            }else{
+                this.setFoucs(false);
+                this.node.cardCode.string = '';
+                this.setFoucs(true);
+            }
             return;
         }
         console.log('翻开的牌值',cardName);

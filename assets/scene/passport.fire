@@ -520,7 +520,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 156,
+      "width": 312,
       "height": 32.76
     },
     "_anchorPoint": {
@@ -532,7 +532,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        103.027,
+        190.444,
         1,
         0,
         0,
@@ -571,8 +571,8 @@
       }
     ],
     "_useOriginalSize": true,
-    "_string": "记住账号密码",
-    "_N$string": "记住账号密码",
+    "_string": "记住账号密码和选择的游戏",
+    "_N$string": "记住账号密码和选择的游戏",
     "_fontSize": 26,
     "_lineHeight": 26,
     "_enableWrapText": true,
@@ -3953,7 +3953,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 130.14,
+      "width": 0,
       "height": 32.76
     },
     "_anchorPoint": {

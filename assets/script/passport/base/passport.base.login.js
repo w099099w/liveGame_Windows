@@ -17,16 +17,17 @@ M.init = function(component,frame){
     this.addEvent();
 }
 M.reset = function(){
+    //读取配置
     if(cc.sys.localStorage.getItem('remember')){
         this.node.isAgree.active = true;
         let info = JSON.parse(cc.sys.localStorage.getItem('remember'));
         this.node.input_phone.string = info.phone;
         this.node.input_password.string = info.password;
+        this.choose_gameID = info.choose_gameID;
     }else{
         this.node.isAgree.active = false;
+        this.choose_gameID = null;
     }
-    //初始化游戏列表选择
-    this.choose_gameID = null;
     this.node.root.active = true;
     this.gameList = [];
     G.NETWORK.request('get','/dealer/category',{},null,(success)=>{
@@ -35,7 +36,7 @@ M.reset = function(){
             G.GAME.forEach((item)=>{
                 this.gameList.push(item.game_name);
             },this);
-            this.node.input_gameID.init(this.gameList,false,(index)=>{
+            this.node.input_gameID.init(this.gameList,this.choose_gameID === null?false:this.choose_gameID,(index)=>{
                 this.choose_gameID = index;
             });
             return; 
@@ -80,7 +81,8 @@ M.request = function(){
                 if(this.node.isAgree.active){
                     let info = {
                         phone:this.node.input_phone.string,
-                        password:this.node.input_password.string
+                        password:this.node.input_password.string,
+                        choose_gameID:this.choose_gameID
                     }
                     cc.sys.localStorage.setItem('remember',JSON.stringify(info));
                 }
