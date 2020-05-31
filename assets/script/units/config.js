@@ -15,7 +15,7 @@ let IPARRAY = [
   {
     SPEICALHTTP:"http://service1.df8189.com",
     HTTP:"http://service2.df8189.com",
-    WS: "ws://47.57.114.45:9502"
+    WS: "ws://47.57.65.151:9502"
   },
   {
     SPEICALHTTP:"http://live.go.com",

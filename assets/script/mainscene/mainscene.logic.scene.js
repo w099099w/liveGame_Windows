@@ -78,7 +78,6 @@ M.onMessage = function(data){
     }
     if(data && data.type === G.GAME[G.USER.choose_gameID].id){
         let state = data.stage;
-        console.log('游戏状态',this.roomStateStr[state]);
         switch(state){
             case RoomState.ROOM_START_BET:this.frame.view.base.home.setStateText('押注倒计时: '+data.countdown);break;
             case RoomState.ROOM_CONFIRM_OPEN:this.frame.view.base.home.setStateText('开牌倒计时: '+data.countdown);break;
@@ -218,6 +217,8 @@ M.requestLookCard = function(requestData){
         this.frame.common.toast.show('开牌成功!',false);
     },(failed)=>{
         this.o = false;
+        this.frame.view.base.home.node.cardCode.string = '';
+        this.frame.view.base.home.setFoucs(true);
         this.frame.common.toast.show(failed.message);
     });
 }
