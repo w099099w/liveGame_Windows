@@ -2,7 +2,8 @@
 ; 有关创建 Inno Setup 脚本文件的详细资料请查阅帮助文档！
 
 #define MyAppName "LiveGame_windows Beta"
-#define MyAppVersion "1.0.7 Beta"
+#define MyInstanceName "LiveGame_windows"
+#define MyAppVersion "1.0.9 Beta"
 #define MyAppPublisher "cocos creater"
 #define MyAppURL "http://www.cocos.com/"
 #define MyAppExeName "liveGame_Windows.exe"
@@ -37,12 +38,68 @@ SetupIconFile=F:\PROJECT\liveGame_Windows\innoBuild\installed.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+[code]
+function deleteCache():Boolean;
+var userName: String;
+      deleteDir: String;
+begin
+      Result := True;
+      userName := GetUserNameString();
+      deleteDir :=  'C:\Users\'+userName;
+      deleteDir := deleteDir++'\AppData\Local\{#MyInstanceName}';
+      if DirExists(deleteDir) then
+        DelTree(deleteDir, True, True, True)
+end;
+ function NextButtonClick(CurPageID: Integer): Boolean;
+ var Index:Integer;
+ begin
+ Result := True;
+    if CurPageID = 9 then
+    begin
+        Index := WizardForm.TasksList.Items.IndexOf('清除之前遗留的数据缓存');
+        if Index <> -1 then
+           Log(IntToStr(Index ));
+        if WizardForm.TasksList.Checked[Index] then
+        begin
+            if  MsgBox('您选择了删除保留数据,这可能导致您的个人配置信息丢失,且应用程序将使用默认设置,若要更改请点击取消!',mbInformation, MB_OKCANCEL) = IDOK then
+              Result := True
+           else
+               Result := False;
+        end;
+    end;
+ end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var isdDelCache:Boolean;
+      Index:Integer;
+begin
+  Index := WizardForm.TasksList.Items.IndexOf('清除之前遗留的数据缓存');
+  isdDelCache :=  WizardForm.TasksList.Checked[Index];
+  if CurStep = ssPostInstall then
+  begin
+     if isdDelCache then
+     begin
+        deleteCache();
+     end;
+  end;
+end;
+
+procedure CurPageChanged(CurPageID: Integer);
+var Index:Integer;
+begin
+  if CurPageID = 9 then
+  begin
+        Index := WizardForm.TasksList.Items.IndexOf('清除之前遗留的数据缓存');
+         WizardForm.TasksList.Checked[Index] := True;
+  end;  
+end;
 
 [Languages]
 Name: "chinesesimp"; MessagesFile: "compiler:Default.isl"
 Name: "english"; MessagesFile: "compiler:Languages\English.isl"
 
 [Tasks]
+Name: "delCache"; Description: "清除之前遗留的数据缓存";GroupDescription:"遗留的数据缓存";Flags:checkablealone
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 6.1; Check: not IsAdminInstallMode
 

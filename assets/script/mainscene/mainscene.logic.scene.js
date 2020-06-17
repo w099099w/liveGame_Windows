@@ -3,7 +3,19 @@ let M = {}
 M.init = function(component,frame){
     this.prototype = component;
     this.frame = frame;
+    this.node = {
+        toggle:cc.find('config/toggle',frame.node).getComponent(cc.Toggle),
+        configLay:cc.find('config/inputlayout',frame.node),
+        remButton:cc.find('config/rember',frame.node).getComponent(cc.Toggle),
+    }
+    this.closeInput = false;
+    this.node.toggle.isChecked = false;
+    this.node.configLay.active = false;
+    this.node.remButton.node.active = false;
+    this.cardCodeArr = cc.sys.localStorage.getItem('remConfig')?JSON.parse(cc.sys.localStorage.getItem('remConfig')):[];
+    this.node.remButton.isChecked = cc.sys.localStorage.getItem('isRem')?true:false;
     this.reset();
+    this.addEvent();
 }
 M.reset = function(){
     this.roomStateStr = [
@@ -17,12 +29,92 @@ M.reset = function(){
         '结算中',
         '本局结束',
     ]
+    for(let i = 0; i < this.node.configLay.children.length;++i){
+        //设置数据显示
+        if(this.cardCodeArr[i]){
+            this.node.configLay.children[i].getChildByName('input').getComponent(cc.EditBox).string = this.cardCodeArr[i];
+        }else{
+            this.node.configLay.children[i].getChildByName('input').getComponent(cc.EditBox).string = '';
+        }  
+        if(G.USER.choose_gameID === 1 && i > 7){
+            this.node.configLay.children[i].active = false;
+        }else{
+            this.node.configLay.children[i].active = true;
+        }
+    }
     this.tempArr = [];
     this.RoomState = null;
     this.requestState();
 }
 M.start = function(){
    
+}
+M.configState = function(){
+    this.toggleState = this.node.toggle.isChecked;
+    this.node.configLay.active = this.toggleState;
+    this.node.remButton.node.active = this.toggleState;
+    if(this.toggleState){
+        this.checkCardcode();
+    }
+}
+M.remConfig = function(){
+    if(!this.node.remButton.isChecked){
+        cc.sys.localStorage.removeItem('remConfig');
+    }
+    if(this.node.remButton.isChecked){
+        cc.sys.localStorage.setItem('isRem',1);
+    }else{
+        cc.sys.localStorage.removeItem('isRem');
+    }
+}
+M.checkCardcode = function(){
+    //采集数据
+    for(let i = 0; i < (G.USER.choose_gameID == 0?18:8);++i){
+        let cardCode = this.node.configLay.children[i].getChildByName('input').getComponent(cc.EditBox).string;
+        if(cardCode.length === 4){
+            this.cardCodeArr[i] = this.node.configLay.children[i].getChildByName('input').getComponent(cc.EditBox).string;
+        }
+    }
+    if(this.node.remButton.isChecked){
+        cc.sys.localStorage.setItem('remConfig',JSON.stringify(this.cardCodeArr));
+    }
+    //校验数据
+    for(let i = 0; i < (G.USER.choose_gameID == 0?18:8);++i){
+        let cardCode = this.node.configLay.children[i].getChildByName('input').getComponent(cc.EditBox).string;
+        if(cardCode === '' || cardCode.length < 4 || !G.TOOL.cardValueToName(Number(cardCode.substr(1)/10),cardCode.substr(0,1))){
+            this.node.configLay.children[i].getChildByName('isok').active = true;
+        }else{
+            this.node.configLay.children[i].getChildByName('isok').active = false;
+        }
+    }
+    //处理重复数据
+    let sameIndex = this.SameOut(this.cardCodeArr)
+    for(let i = 0; i < sameIndex.length;++i){
+        this.node.configLay.children[sameIndex[i]].getChildByName('isok').active = true;
+    }
+}
+M.isOkConfig = function(){
+    for(let i = 0; i < (G.USER.choose_gameID == 0?18:8);++i){
+        if(this.node.configLay.children[i].getChildByName('isok').active){
+            return false;
+        }
+    }
+    return true;
+}
+M.SameOut = function(arr){
+    let key;
+    let i = 0;
+    let repeatID = [];
+    while(i<=arr.length){ 
+        key = arr[i];
+        for(k=i+1;k<=arr.length;k++){
+            if(key==arr[k]){
+                repeatID.push(i,k);
+            }       
+        }
+        i++; 
+    }
+    return repeatID;
 }
 M.autoOpenCard = function(){
     if(this.RoomState !== RoomState.ROOM_SEE_CARD){
@@ -32,45 +124,64 @@ M.autoOpenCard = function(){
     if(!this.frame.view.base.home.checkAllCardIslooked()){
         this.o = true;
     }
-    let cardValue = '';
-    do{
-        let id = this.frame.view.base.home.calcTempID();
-        if(id == -1){
+    if(this.toggleState){
+        if(this.isOkConfig()){
+            let id = this.frame.view.base.home.calcTempID();
+            if(id == -1){
+                return;
+            }
+            id = id < 10?String('0'+id):String(id);
+            let cardCode = this.cardCodeArr[Number(id)-1];
+            let requestData = {
+                card_number:String(id+cardCode),
+            }
+            console.log('自动翻牌码:'+requestData.card_number);
+            this.requestLookCard(requestData);
+        }else{
+            this.frame.common.toast.show('请先修正错误!',false);
             return;
         }
-        id = id < 10?String('0'+id):String(id);
-        let cardColor = Math.round(Math.random()*5)+5;
-        if(G.USER.choose_gameID == 1){
-            do{
-                cardColor = Math.round(Math.random()*5)+5;
-            }while(cardColor == 9 || cardColor == 10);
-        }
-        if(cardColor == 9){
-            cardValue  = id + String(1000);
-        }else if(cardColor == 10){
-            cardValue  = id + String(2000);
-        }else{
-            cardValue  = id+String(cardColor);
-            let card_number = Math.round(Math.random()*12)+1;
-            if(G.USER.choose_gameID === 1){
-                do{
-                    card_number = Math.round(Math.random()*12)+1;
-                }while(card_number > 10);
+    }else{
+        let cardValue = '';
+        do{
+            let id = this.frame.view.base.home.calcTempID();
+            if(id == -1){
+                return;
             }
-            card_number = card_number < 10?String('0'+(card_number*10)):String(card_number*10);
-            cardValue += card_number;
+            id = id < 10?String('0'+id):String(id);
+            let cardColor = Math.round(Math.random()*5)+5;
+            if(G.USER.choose_gameID == 1){
+                do{
+                    cardColor = Math.round(Math.random()*5)+5;
+                }while(cardColor == 9 || cardColor == 10);
+            }
+            if(cardColor == 9){
+                cardValue  = id + String(1000);
+            }else if(cardColor == 10){
+                cardValue  = id + String(2000);
+            }else{
+                cardValue  = id+String(cardColor);
+                let card_number = Math.round(Math.random()*12)+1;
+                if(G.USER.choose_gameID === 1){
+                    do{
+                        card_number = Math.round(Math.random()*12)+1;
+                    }while(card_number > 10);
+                }
+                card_number = card_number < 10?String('0'+(card_number*10)):String(card_number*10);
+                cardValue += card_number;
+            }
+            if(cardValue.length !== 6){
+                console.log('数据错误:'+cardValue);
+            }
+            
+        }while(this.tempArr.includes(cardValue.substr(2,4)));
+        this.tempArr.push(cardValue.substr(2,4));
+        let requestData = {
+            card_number:cardValue
         }
-        if(cardValue.length !== 6){
-            console.log('数据错误:'+cardValue);
-        }
-        
-    }while(this.tempArr.includes(cardValue.substr(2,4)));
-    this.tempArr.push(cardValue.substr(2,4));
-    let requestData = {
-        card_number:cardValue
+        console.log('自动翻牌码:'+cardValue);
+        this.requestLookCard(requestData);
     }
-    console.log('自动翻牌码:'+cardValue);
-    this.requestLookCard(requestData);
 }
 M.onMessage = function(data){
     if(this.close){
@@ -106,7 +217,6 @@ M.onMessage = function(data){
         this.setBetButton(state);
         //翻牌
         if(state === RoomState.ROOM_SEE_CARD){
-            this.frame.view.base.home.setFoucs(true);
             if(data.info.length !== 0){
                 this.flushOpenCard(data.info);
             }
@@ -146,11 +256,12 @@ M.flushOpenCard = function(data){
 /**@description 设置下注按键状态*/
 M.setBetButton = function(stateCode){
     switch(Number(stateCode)){
+        case RoomState.ROOM_STOP_BET:this.frame.view.base.home.setBetButtonState(BetState.START_CARD); this.closeInput = true;break//开始开牌按钮
         case RoomState.ROOM_CONFIRM_OPEN:this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENCARD);break//看牌倒计时也不可点击确认开牌
         case RoomState.ROOM_NOT_OPEN:this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENROOM);break//房间未开变为开始押注但不可点击
         case RoomState.ROOM_SHUFFLE:this.frame.view.base.home.setBetButtonState(BetState.STATE_BET);break;//开始押注激活
         case RoomState.ROOM_START_BET:this.frame.view.base.home.setBetButtonState(BetState.STATE_BETING);break;//和倒计时同时下发开始压注显示压注中
-        case RoomState.ROOM_SEE_CARD:this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENCARD);break; //请求成功变为确认开牌('所有牌开完自动变为确认开牌,由看牌函数lookCard调用')
+        case RoomState.ROOM_SEE_CARD:if(!this.closeInput)this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENCARD);break; //请求成功变为确认开牌('所有牌开完自动变为确认开牌,由看牌函数lookCard调用')
         case RoomState.ROOM_SETTLEMENT:this.requestSettleMent();break;//调用结算接口
     }
     this.RoomState = Number(stateCode);
@@ -260,6 +371,8 @@ M.onDestroy = function(){
     }
 }
 M.addEvent = function(){
-
+    for(let i = 0; i < this.node.configLay.children.length;++i){
+        this.node.configLay.children[i].getChildByName('input').on('editing-did-ended',this.checkCardcode.bind(this));
+    }
 }
 export default M;

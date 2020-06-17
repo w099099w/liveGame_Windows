@@ -172,6 +172,10 @@ M.setBetButtonState = function(BetStateCode){
             this.node.button_beting.comp.interactable = true;
             this.node.button_beting.label.string = '开始押注';
         }break;
+        case BetState.START_CARD:{
+            this.node.button_beting.comp.interactable = true;
+            this.node.button_beting.label.string = '开始开牌';
+        }break;
         case BetState.STATE_BETING:{
             this.node.button_beting.comp.interactable = false;
             this.node.button_beting.label.string = '押注中';
@@ -222,6 +226,15 @@ M.betButtonDown = function(){
         switch(this.button_betStateCode){
             case BetState.STATE_BET:this.frame.logic.scene.requestBeting();break;
             case BetState.STATE_OPENCARD:this.checkAllCardIslooked()?this.frame.logic.scene.requestOpenCard():this.frame.common.toast.show('请先完成所有区域发牌!');break;
+            case BetState.START_CARD:{
+                this.frame.logic.scene.closeInput = false;
+                this.setFoucs(true);
+                if(this.calcTempID() == -1){
+                    this.setBetButtonState(BetState.STATE_OPENCARD);
+                }else{
+                    this.setBetButtonState(BetState.STATE_NOOPENCARD);
+                }
+            };break;
         }
     }
 }
@@ -249,7 +262,7 @@ M.addEvent = function(){
         this.betButtonDown();
     },this);
     this.node.cardCode.node.on('editing-did-began',()=>{
-       if(this.frame.logic.scene.RoomState !== RoomState.ROOM_SEE_CARD){
+       if(this.frame.logic.scene.RoomState !== RoomState.ROOM_SEE_CARD || this.frame.logic.scene.closeInput){
            setTimeout(()=>{
             this.setFoucs(false);
            },30);

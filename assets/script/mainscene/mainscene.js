@@ -79,6 +79,12 @@ cc.Class({
     testButton(){
         this.frame.logic.scene.autoOpenCard();
     },
+    toggleButton(){
+        this.frame.logic.scene.configState();
+    },
+    remButton(){
+        this.frame.logic.scene.remConfig();
+    },
     //消息转发器
     onMessage(code,data){
         console.log('passport网络消息(websocket)',code,JSON.stringify(data));

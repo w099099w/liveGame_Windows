@@ -13,9 +13,9 @@ const NETWORKTYPE = cc.Enum({
 
 let IPARRAY = [
   {
-    SPEICALHTTP:"http://service1.df8189.com",
-    HTTP:"http://service2.df8189.com",
-    WS: "ws://47.57.65.151:9502"
+    SPEICALHTTP:"http://103.60.166.237:8888",
+    HTTP:"http://103.60.166.237:9999",
+    WS: "ws://103.60.166.237:9502"
   },
   {
     SPEICALHTTP:"http://live.go.com",
@@ -177,9 +177,13 @@ var G = {
     * @return {string} 返回文件名称出错返回null;
     */
     cardValueToName(num,color){
-      console.log('牌值转换前:',num,color);
+      console.log('值:'+num,'花色:'+color)
       if(num < 0 || num > 13 || color < 1 || color > 8){
         return null;
+      }else if(G.USER.choose_gameID == 1){
+        if(num > 10 || num == 0){
+          return null;
+        }
       }
       let cardName = null;
       if(color >= 5 && color <= 8){
@@ -191,8 +195,8 @@ var G = {
               case 5:m_color = 0;break;
           }
           cardName = 'x'+String(((num-1)*4)+m_color);
-      }else if((color === 1 || color === 2)&& (num === 0 || num === 0)){
-          if(color === 2){
+      }else if((color == 1 || color == 2)&& (num == 0)){
+          if(color == 2){
               cardName = 'x52'; 
           }else{
               cardName = 'x53'; 
@@ -242,17 +246,22 @@ const BetState = cc.Enum({
   * @description 押注中
   * @type {number} 
  */
-  STATE_BETING:2,
+  START_CARD:2,
+  /**
+   * @description 押注中
+   * @type {number} 
+  */
+  STATE_BETING:3,
   /**
   * @description 确认开牌
   * @type {number} 
  */
-  STATE_OPENCARD:3,
+  STATE_OPENCARD:4,
    /**
   * @description 确认开牌但不可点击
   * @type {number} 
  */
-  STATE_NOOPENCARD:4
+  STATE_NOOPENCARD:5
 });
 /**
  * @description:房间状态码枚举
