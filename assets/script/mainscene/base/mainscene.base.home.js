@@ -15,11 +15,36 @@ M.init = function(component,frame){
             comp:cc.find('buttom/button_betorbeting',frame.node).getComponent(cc.Button),
             label:cc.find('buttom/button_betorbeting/Background/value',frame.node).getComponent(cc.Label)
         },
+        countdown:{
+            root:cc.find('popup/countdown',frame.node),
+            value:cc.find('popup/countdown/value',frame.node),
+            comp:cc.find('popup/countdown/value',frame.node).getComponent(cc.Label),
+        },
         playerList:null,
         gamePrefab:frame.gamePrefab,
     }
     this.reset();
     this.addEvent();
+}
+M.hideCountDown = function(){
+    this.node.countdown.root.active = false;
+}
+M.setCountDown = function(timer){
+    this.node.countdown.root.active = true;
+    G.AUDIO.instance.playEffectFromLocal(EFFECTS.EFF_COUNTDOWN);
+    if(timer > 5){
+        this.node.countdown.comp.fontSize = this.node.countdown.comp.lineHeight=140;
+        this.node.countdown.comp.string = String(timer);
+    }else{
+        this.node.countdown.root.active = true;
+        this.node.countdown.comp.fontSize = this.node.countdown.comp.lineHeight = 280;
+        this.node.countdown.comp.string = String(timer);
+        cc.tween(this.node.countdown.comp).to(0.5, {fontSize: 140.0,lineHeight:140.0}, { easing: 'quadIn'}).call(()=>{
+            if(timer <= 0){
+                this.hideCountDown();
+            }
+        }).start();
+    }
 }
 M.reset = function(){
     cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.keyDown, this);
@@ -262,7 +287,7 @@ M.addEvent = function(){
         this.betButtonDown();
     },this);
     this.node.cardCode.node.on('editing-did-began',()=>{
-       if(this.frame.logic.scene.RoomState !== RoomState.ROOM_SEE_CARD || this.frame.logic.scene.closeInput){
+       if((this.frame.logic.scene.RoomState !== RoomState.ROOM_SEE_CARD && this.frame.logic.scene.RoomState !== RoomState.ROOM_STOP_BET) || this.frame.logic.scene.closeInput){
            setTimeout(()=>{
             this.setFoucs(false);
            },30);

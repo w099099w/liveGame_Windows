@@ -190,7 +190,7 @@ M.onMessage = function(data){
     if(data && data.type === G.GAME[G.USER.choose_gameID].id){
         let state = data.stage;
         switch(state){
-            case RoomState.ROOM_START_BET:this.frame.view.base.home.setStateText('押注倒计时: '+data.countdown);break;
+            case RoomState.ROOM_START_BET:this.frame.view.base.home.setStateText('押注倒计时: '+data.countdown);this.frame.view.base.home.setCountDown(data.countdown);break;
             case RoomState.ROOM_CONFIRM_OPEN:this.frame.view.base.home.setStateText('开牌倒计时: '+data.countdown);break;
             case RoomState.ROOM_SETTLEMENT:this.frame.view.base.home.setStateText('结算倒计时:'+data.countdown);break;
             case RoomState.ROOM_STOP_BET:this.frame.view.base.home.setStateText('停止押注');break;
@@ -199,6 +199,7 @@ M.onMessage = function(data){
         //庄家发送控制
         if(state === RoomState.ROOM_START_BET && data.countdown === 0){
             this.requestBankerInfo();
+            G.AUDIO.instance.playEffectFromLocal(EFFECTS.EFF_STOPBET);
             this.frame.common.toast.show('停止押注!',false);
         }
         //游戏结束时间为0重置牌面
@@ -256,7 +257,7 @@ M.flushOpenCard = function(data){
 /**@description 设置下注按键状态*/
 M.setBetButton = function(stateCode,countdown = -1){
     switch(Number(stateCode)){
-        case RoomState.ROOM_STOP_BET:if(typeof countdown != 'undefined' && countdown == 0){this.frame.view.base.home.setBetButtonState(BetState.START_CARD); this.closeInput = true};break//开始开牌按钮
+        case RoomState.ROOM_STOP_BET:if(typeof countdown != 'undefined' && countdown == 0){this.frame.view.base.home.setBetButtonState(BetState.START_CARD); this.closeInput = true;this.frame.view.base.home.setFoucs(false);};break//开始开牌按钮
         case RoomState.ROOM_CONFIRM_OPEN:this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENCARD);break//看牌倒计时也不可点击确认开牌
         case RoomState.ROOM_NOT_OPEN:this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENROOM);break//房间未开变为开始押注但不可点击
         case RoomState.ROOM_SHUFFLE:this.frame.view.base.home.setBetButtonState(BetState.STATE_BET);break;//开始押注激活
@@ -304,6 +305,7 @@ M.requestStartGame = function(){
 /**@description 游戏开始时点击开始下注的网络请求*/
 M.requestBeting = function(){
     G.NETWORK.request('post','/dealer/game/betting',{},null,(success)=>{
+        G.AUDIO.instance.playEffectFromLocal(EFFECTS.EFF_STARTBET);
         this.frame.common.toast.show('开始押注!',false);
     },(failed)=>{
         this.frame.common.toast.show(failed.message);
