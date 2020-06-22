@@ -136,7 +136,7 @@ M.calcTempID = function(){
 }
 M.checkLookCardData = function(){
     if(this.node.cardCode.string.length === 0){
-        this.frame.common.toast.show('清输入需要识别的牌型编号');
+        this.frame.common.toast.show('请输入需要识别的牌型编号');
         return;
     }else if(this.node.cardCode.string.length !== 6){
         this.frame.common.toast.show('输入牌型编号长度不正确');

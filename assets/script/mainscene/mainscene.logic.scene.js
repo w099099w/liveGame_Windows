@@ -214,7 +214,7 @@ M.onMessage = function(data){
         if(state === RoomState.ROOM_SETTLEMENT && data.countdown !== 0){
             return;
         }
-        this.setBetButton(state);
+        this.setBetButton(state,data.countdown);
         //翻牌
         if(state === RoomState.ROOM_SEE_CARD){
             if(data.info.length !== 0){
@@ -254,9 +254,9 @@ M.flushOpenCard = function(data){
     }
 }
 /**@description 设置下注按键状态*/
-M.setBetButton = function(stateCode){
+M.setBetButton = function(stateCode,countdown = -1){
     switch(Number(stateCode)){
-        case RoomState.ROOM_STOP_BET:this.frame.view.base.home.setBetButtonState(BetState.START_CARD); this.closeInput = true;break//开始开牌按钮
+        case RoomState.ROOM_STOP_BET:if(typeof countdown != 'undefined' && countdown == 0){this.frame.view.base.home.setBetButtonState(BetState.START_CARD); this.closeInput = true};break//开始开牌按钮
         case RoomState.ROOM_CONFIRM_OPEN:this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENCARD);break//看牌倒计时也不可点击确认开牌
         case RoomState.ROOM_NOT_OPEN:this.frame.view.base.home.setBetButtonState(BetState.STATE_NOOPENROOM);break//房间未开变为开始押注但不可点击
         case RoomState.ROOM_SHUFFLE:this.frame.view.base.home.setBetButtonState(BetState.STATE_BET);break;//开始押注激活

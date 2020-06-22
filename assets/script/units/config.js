@@ -243,7 +243,7 @@ const BetState = cc.Enum({
  */
   STATE_BET:1,
  /**
-  * @description 押注中
+  * @description 开始开牌
   * @type {number} 
  */
   START_CARD:2,
