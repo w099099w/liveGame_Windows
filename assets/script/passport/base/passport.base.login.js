@@ -30,7 +30,10 @@ M.reset = function(){
     }
     this.node.root.active = true;
     this.gameList = [];
-    G.NETWORK.request('get','/dealer/category',{},null,(success)=>{
+    this.requestGameList();
+}
+M.requestGameList = function(){
+    G.NETWORK.request('get','/control/game/category',{},null,(success)=>{
         if(success.code === 200){
             G.GAME = success.data;
             G.GAME.forEach((item)=>{
@@ -44,7 +47,13 @@ M.reset = function(){
     },(failed)=>{
         if(webSocket.state == 1){
             this.frame.common.toast.show(failed.message);
-        } 
+        }
+        setTimeout(()=>{
+            if(cc.director.getScene().getName() == 'passport'){
+                this.frame.common.toast.show("正在重新拉取游戏列表!");
+                this.requestGameList();
+            }
+        },3000); 
     });  
 }
 M.show = function(){
@@ -65,16 +74,16 @@ M.request = function(){
         return;
     }
     if(!G.NETWORK.clientID){
-        this.frame.common.toast.show('未获取到客户端ID,请重启游戏后再试');
+        this.frame.common.toast.show('未获取到客户端ID,请稍后再试');
         return;
     }
     let requestData ={
-        game:String(G.GAME[Number(this.choose_gameID)].id),
+        game_type:String(G.GAME[Number(this.choose_gameID)].id),
         password:this.node.input_password.string,
-        name:this.node.input_phone.string,
+        username:this.node.input_phone.string,
         client_id:String(G.NETWORK.clientID),
     }
-    G.NETWORK.request('post','/dealer/login',requestData,this.frame.common,(success)=>{
+    G.NETWORK.request('post','/control/dealer/login',requestData,this.frame.common,(success)=>{
         if(success.code === 200){
             if(success.data){
                 cc.sys.localStorage.setItem('token',success.data.token);

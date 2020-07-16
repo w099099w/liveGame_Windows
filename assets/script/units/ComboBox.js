@@ -43,7 +43,7 @@ cc.Class({
     },
     comboboxClicked (index) {
         if(!this.itemArray || this.itemArray.length === 0){
-            toast.show('获取游戏列表失败,请重启游戏后在试');
+            toast.show('获取游戏列表失败,请稍后在试!');
             return;
         }
         // 旋转小三角形

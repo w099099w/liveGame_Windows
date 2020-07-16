@@ -18,6 +18,9 @@ M.init = function(component,frame){
     this.addEvent();
 }
 M.reset = function(){
+    this.catche = false;
+    this.frame.view.base.home.hideCountDown();
+    this.frame.view.base.home.resetCard();
     this.roomStateStr = [
         '未在游戏中',
         '房间未开',
@@ -190,9 +193,9 @@ M.onMessage = function(data){
     if(data && data.type === G.GAME[G.USER.choose_gameID].id){
         let state = data.stage;
         switch(state){
-            case RoomState.ROOM_START_BET:this.frame.view.base.home.setStateText('押注倒计时: '+data.countdown);this.frame.view.base.home.setCountDown(data.countdown);break;
-            case RoomState.ROOM_CONFIRM_OPEN:this.frame.view.base.home.setStateText('开牌倒计时: '+data.countdown);break;
-            case RoomState.ROOM_SETTLEMENT:this.frame.view.base.home.setStateText('结算倒计时:'+data.countdown);break;
+            case RoomState.ROOM_START_BET:{this.catche = true;this.frame.view.base.home.setStateText('押注倒计时: '+data.countdown);this.frame.view.base.home.setCountDown(data.countdown)};break;
+            case RoomState.ROOM_CONFIRM_OPEN:{this.catche = true;this.frame.view.base.home.setStateText('开牌倒计时: '+data.countdown)};break;
+            case RoomState.ROOM_SETTLEMENT:{this.catche = true;this.frame.view.base.home.setStateText('结算倒计时:'+data.countdown)};break;
             case RoomState.ROOM_STOP_BET:this.frame.view.base.home.setStateText('停止押注');break;
             case RoomState.ROOM_END:this.frame.view.base.home.setStateText('结束倒计时: '+data.countdown);break;
         }
@@ -204,7 +207,7 @@ M.onMessage = function(data){
         }
         //游戏结束时间为0重置牌面
         if(state === RoomState.ROOM_END && data.countdown === 0){
-            this.frame.view.base.home.resetCard();//状态变为游戏结束重置牌
+            this.reset();//状态变为游戏结束重置牌
         }
         //状态过滤显示
         if(this.roomStateStr && this.roomStateStr[state] && state !== RoomState.ROOM_CONFIRM_OPEN && state !== RoomState.ROOM_START_BET && data.countdown === 0){
@@ -269,19 +272,20 @@ M.setBetButton = function(stateCode,countdown = -1){
 }
 /**@description 进入主场景时请求游戏状态*/
 M.requestState = function(){
-    G.NETWORK.request('get','/dealer/game/status',{},null,(success)=>{
+    console.log("请求游戏状态");
+    G.NETWORK.request('get','/control/game-room/status',{},null,(success)=>{
         if(success.code === 200){
-            if(this.roomStateStr && this.roomStateStr[success.data.gameStatus]){
-                this.frame.view.base.home.setStateText(this.roomStateStr[success.data.gameStatus]);//设置状态显示
-                this.setBetButton(success.data.gameStatus);//设置按键状态
-                this.RoomState = Number(success.data.gameStatus);
-                if(success.data.gameStatus === RoomState.ROOM_NOT_OPEN){
+            if(this.roomStateStr && this.roomStateStr[success.data.status]){
+                this.frame.view.base.home.setStateText(this.roomStateStr[success.data.status]);//设置状态显示
+                this.setBetButton(success.data.status);//设置按键状态
+                this.RoomState = Number(success.data.status);
+                if(success.data.status === RoomState.ROOM_NOT_OPEN){
                     this.close = true;
                 }else{
                     this.close = false;
                 }
                 //变更输入状态
-                if(success.data.gameStatus === RoomState.ROOM_SEE_CARD){
+                if(success.data.status === RoomState.ROOM_SEE_CARD){
                     this.frame.view.base.home.setFoucs(true);
                 }else{
                     this.frame.view.base.home.setFoucs(false);
@@ -296,7 +300,7 @@ M.requestState = function(){
 /**@description 开始游戏*/
 M.requestStartGame = function(){
     this.close = false;
-    G.NETWORK.request('post','/dealer/game/wash',{},null,(success)=>{
+    G.NETWORK.request('post','/control/game/wash',{},null,(success)=>{
         this.frame.common.toast.show('游戏开始!',false);
     },(failed)=>{
         this.frame.common.toast.show(failed.message);
@@ -304,7 +308,7 @@ M.requestStartGame = function(){
 }
 /**@description 游戏开始时点击开始下注的网络请求*/
 M.requestBeting = function(){
-    G.NETWORK.request('post','/dealer/game/betting',{},null,(success)=>{
+    G.NETWORK.request('post','/control/game/betting',{},null,(success)=>{
         G.AUDIO.instance.playEffectFromLocal(EFFECTS.EFF_STARTBET);
         this.frame.common.toast.show('开始押注!',false);
     },(failed)=>{
@@ -325,7 +329,7 @@ M.requestLookCard = function(requestData){
         this.frame.common.toast.show('非看牌状态不可看牌,请稍后!');
         return;
     }
-    G.NETWORK.request('post','/dealer/game/watching',requestData,null,(success)=>{
+    G.NETWORK.request('post','/control/game/watching',requestData,null,(success)=>{
         console.log(success)
         this.frame.common.toast.show('开牌成功!',false);
     },(failed)=>{
@@ -337,8 +341,11 @@ M.requestLookCard = function(requestData){
 }
 /**@description 所有牌录入完成后进行的网络请求成功后3秒进行结算请求*/
 M.requestOpenCard = function(){
-    G.NETWORK.request('post','/dealer/game/open',{},null,(success)=>{
+    G.NETWORK.request('post','/control/game/open',{},null,(success)=>{
         this.frame.common.toast.show('开牌成功!',false);
+        this.catche = true;
+        this.frame.view.base.home.node.button_catche.comp.interactable = false;
+        this.frame.view.base.home.node.button_catche.label.string = '取消结算';
     },(failed)=>{
         this.frame.common.toast.show(failed.message);
     });  
@@ -353,7 +360,7 @@ M.requestSettleMent = function(){
 }
 /**@description 关闭自动开始网络请求*/
 M.requestGameEnd = function(requestData){
-    G.NETWORK.request('post','/dealer/game/gameover',requestData,null,(success)=>{
+    G.NETWORK.request('post','/control/game/over',requestData,null,(success)=>{
         if(success.code == 200){
             this.frame.common.toast.show('操作已成功!');
             this.frame.view.popup.endGame.hide();
@@ -365,6 +372,15 @@ M.requestGameEnd = function(requestData){
     },(failed)=>{
         this.frame.common.toast.show(failed.message);
     });
+}
+M.requestExceptionHandle = function(){
+    G.NETWORK.request('post','/foo/abnormal/settle/'+String(G.USER.choose_gameID+1),{},null,(success)=>{
+        if(success.code == 0){
+           this.reset();
+        }
+    },(failed)=>{
+        this.frame.common.toast.show(failed.message);
+    },null,G.NETWORK.SPEICALHTTP);
 }
 M.onDestroy = function(){
     if(this.timer){

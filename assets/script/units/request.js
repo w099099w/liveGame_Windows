@@ -5,6 +5,22 @@ function Uint8ArrayToString(fileData){
     }
     return dataString
   }
+function isJsonStr(str){
+  if (typeof str == 'string') {
+      try {
+          var obj=JSON.parse(str);
+          if(typeof obj == 'object' && obj ){
+              return true;
+          }else{
+              return false;
+          }
+      } catch(e) {
+          console.log('error：'+str+'!!!不是JSON 字符串'+e);
+          return false;
+      }
+  }
+  return false;
+}
   function ajax(method, url, params,progressFunction,Host) {
     if (url !== '') {
       if(Host){
@@ -29,7 +45,12 @@ function Uint8ArrayToString(fileData){
               reject({"code":'erroe',"message":"连接服务器失败"});
               return;
           }
-          reject(JSON.parse(xhr.responseText));
+          if(isJsonStr(xhr.responseText)){
+            reject(JSON.parse(xhr.responseText));
+          }else{
+            reject(JSON.parse(JSON.stringify({"code":'erroe',"message":xhr.responseText})));
+          }
+          
         }
       }
       console.log('token:'+token);

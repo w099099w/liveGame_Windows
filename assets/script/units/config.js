@@ -1,13 +1,13 @@
 let IPARRAY = [
   {
-    SPEICALHTTP:"http://103.60.166.237:8888",
-    HTTP:"http://103.60.166.237:9999",
-    WS: "ws://103.60.166.237:9502"
+    SPEICALHTTP:"http://202.79.173.82:8888",
+    HTTP:"http://202.79.173.82:9999",
+    WS: "ws://202.79.173.82:7272"
   },
   {
     SPEICALHTTP:"http://live.go.com",
     HTTP:"http://live.php.com",
-    WS: "ws://192.168.8.120:9502"
+    WS: "ws://192.168.0.120:9502"
   }
 ];
 //网络控制
@@ -79,6 +79,7 @@ var G = {
     * @param {object} USER 用户配置
     */
   USER: {
+    isDebug:true,
     tempData:null,
     choose_gameID:null,//选择的游戏ID
     curResolutionID:5,//默认选择的分辨率组ID

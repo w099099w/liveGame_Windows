@@ -15,6 +15,11 @@ M.init = function(component,frame){
             comp:cc.find('buttom/button_betorbeting',frame.node).getComponent(cc.Button),
             label:cc.find('buttom/button_betorbeting/Background/value',frame.node).getComponent(cc.Label)
         },
+        button_catche:{
+            root:cc.find('buttom/button_catch',frame.node),
+            comp:cc.find('buttom/button_catch',frame.node).getComponent(cc.Button),
+            label:cc.find('buttom/button_catch/Background/value',frame.node).getComponent(cc.Label)
+        },
         countdown:{
             root:cc.find('popup/countdown',frame.node),
             value:cc.find('popup/countdown/value',frame.node),
@@ -22,7 +27,10 @@ M.init = function(component,frame){
         },
         playerList:null,
         gamePrefab:frame.gamePrefab,
+        Config:cc.find('config',frame.node),
+        button_randOpen:cc.find("buttom/New Button",frame.node),
     }
+    this.node.Config.active = this.node.button_randOpen.active = G.USER.isDebug;
     this.reset();
     this.addEvent();
 }
@@ -79,7 +87,16 @@ M.keyDown = function(event){
     }else if(event.keyCode == G.USER.keyBind.state){
         //向节点发射事假
        this.betButtonDown();
+    }else if(event.keyCode == 27){
+        this.exceptionHandle();
     }
+}
+M.exceptionHandle = function(){
+    console.log("查看",this.node.button_catche.comp.interactable);
+    if(!this.node.button_catche.comp.interactable){
+        return;
+    }
+    this.frame.logic.scene.requestExceptionHandle();
 }
 M.setStateText = function(str){
     this.node.stateText.string = str;
@@ -160,7 +177,9 @@ M.calcTempID = function(){
     return -1;
 }
 M.checkLookCardData = function(){
-    if(this.node.cardCode.string.length === 0){
+    if(this.frame.logic.scene.RoomState !== RoomState.ROOM_SEE_CARD){
+        return;
+    }else if(this.node.cardCode.string.length === 0){
         this.frame.common.toast.show('请输入需要识别的牌型编号');
         return;
     }else if(this.node.cardCode.string.length !== 6){
@@ -192,26 +211,42 @@ M.setBetButtonState = function(BetStateCode){
         case BetState.STATE_NOOPENROOM:{
             this.node.button_beting.comp.interactable = false;
             this.node.button_beting.label.string = '开始押注';
+            this.node.button_catche.comp.interactable = false;
+            this.node.button_catche.label.string = '取消结算';
         }break;
         case BetState.STATE_BET:{
             this.node.button_beting.comp.interactable = true;
             this.node.button_beting.label.string = '开始押注';
+            this.node.button_catche.comp.interactable = false;
+            this.node.button_catche.label.string = '取消结算';
         }break;
         case BetState.START_CARD:{
             this.node.button_beting.comp.interactable = true;
             this.node.button_beting.label.string = '开始开牌';
+            this.node.button_catche.comp.interactable = true;
+            this.node.button_catche.label.string = '取消结算';
         }break;
         case BetState.STATE_BETING:{
             this.node.button_beting.comp.interactable = false;
             this.node.button_beting.label.string = '押注中';
+            this.node.button_catche.comp.interactable = false;
+            this.node.button_catche.label.string = '取消结算';
         }break;
         case BetState.STATE_OPENCARD:{
+            this.node.button_catche.comp.interactable = true;
+            this.node.button_catche.label.string = '取消结算';
             this.node.button_beting.comp.interactable = true;
             this.node.button_beting.label.string = '确认开牌';
         }break;
         case BetState.STATE_NOOPENCARD:{
+            this.node.button_catche.comp.interactable = !this.frame.logic.scene.catche;
+            this.node.button_catche.label.string = '取消结算';
             this.node.button_beting.comp.interactable = false;
             this.node.button_beting.label.string = '确认开牌';
+        }break;
+        default:{
+            this.node.button_catche.comp.interactable = false;
+            this.node.button_catche.label.string = '取消结算';
         }break;
     } 
     this.button_betStateCode =  BetStateCode;

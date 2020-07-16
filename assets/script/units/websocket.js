@@ -147,13 +147,13 @@ webSocket.onMessage = function(event) {
         }else if(msg.code === 'init'){
             const token = cc.sys.localStorage.getItem('token');
             if(G.NETWORK.clientID && token){
-              G.NETWORK.request('post','/dealer/game/reconnect',{client_id:Number(msg.data.info)});
+              G.NETWORK.request('post','/control/game/reconnect',{client_id:Number(msg.data.info)});
             }
             G.NETWORK.clientID = msg.data.info;
             this.loading.hide();
             return;
         }
-      console.log("websocket网络消息==========");
+      console.log("websocket过滤网络消息==========");
       this.queue.push(msg)//推送到队列
     } 
 }

@@ -135,6 +135,10 @@ M.keyShow = function(keyCode){
     return showString?showString:String.fromCharCode(keyCode);
 }
 M.onKeyDown_state = function(event){
+    if(event.keyCode == 27){
+        this.frame.common.toast.show('该键已被系统预制!,请重试');
+        return;
+    }
     if(event.keyCode == G.USER.keyBind.cin){
         this.frame.common.toast.show('不能与牌型录入按键相同,请重新键入!')
         return;
@@ -149,6 +153,10 @@ M.onKeyDown_state = function(event){
     cc.sys.localStorage.setItem('keyBind',JSON.stringify(keyBind));
 }
 M.onKeyDown_cinCardType = function(event){
+    if(event.keyCode == 27){
+        this.frame.common.toast.show('该键已被系统预制!,请重试');
+        return;
+    }
     if(event.keyCode == G.USER.keyBind.state){
         this.frame.common.toast.show('不能与状态控制按键相同,请重新键入!')
         return;
