@@ -2,6 +2,7 @@ let frame = {
     common: {
         loading:require('common.loading'),
         toast:require('common.toast'),
+        dialog:require('common.dialog'),
         loadAtlas:require('mainscene.logic.loadAtlas'),
     },
     view: {
@@ -12,6 +13,7 @@ let frame = {
         popup:{
             quit:require('mainscene.popup.quit'),
             endGame:require('mainscene.popup.endgame'),
+            tip:require('mainscene.popup.tip')
         }
     },
     logic:{
@@ -101,6 +103,9 @@ cc.Class({
         for (let key in frame.updata) {
             this.frame.updata[key].updata();
         }
+    },
+    temp(){
+        this.frame.logic.scene.requestExceptionHandle();
     },
     onDestroy(){
         for (let key in frame.onDestroy) {

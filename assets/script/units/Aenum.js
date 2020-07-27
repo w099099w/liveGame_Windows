@@ -149,3 +149,24 @@ const BetState = cc.Enum({
     */
    BGM_HALL: 1,
  });
+ /**
+ * @description:DIALOG枚举
+ * @readonly
+ */
+const DIALOG = cc.Enum({
+  /**
+   * @description 确定按钮
+   * @type {number}
+   */
+  MB_YES: 0,
+  /**
+   * @description 取消按钮
+   * @type {number}
+   */
+  MB_NO: 1,
+  /**
+   * @description 确定和取消按钮
+   * @type {number}
+   */
+  MB_YESNO: 2,
+});

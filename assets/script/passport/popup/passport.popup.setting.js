@@ -135,7 +135,8 @@ M.keyShow = function(keyCode){
     return showString?showString:String.fromCharCode(keyCode);
 }
 M.onKeyDown_state = function(event){
-    if(event.keyCode == 27){
+    console.log(event.keyCode);
+    if(event.keyCode == 27 || event.keyCode == 89 || event.keyCode == 78){
         this.frame.common.toast.show('该键已被系统预制!,请重试');
         return;
     }
@@ -150,10 +151,12 @@ M.onKeyDown_state = function(event){
         state:Number(event.keyCode),
         cin:G.USER.keyBind.cin
     }
+    G.USER.keyBind.state = Number(event.keyCode);
     cc.sys.localStorage.setItem('keyBind',JSON.stringify(keyBind));
 }
 M.onKeyDown_cinCardType = function(event){
-    if(event.keyCode == 27){
+    console.log(event.keyCode);
+    if(event.keyCode == 27 || event.keyCode == 89 || event.keyCode == 78){
         this.frame.common.toast.show('该键已被系统预制!,请重试');
         return;
     }
@@ -168,6 +171,7 @@ M.onKeyDown_cinCardType = function(event){
         state:G.USER.keyBind.state,
         cin:Number(event.keyCode)
     }
+    G.USER.keyBind.cin = Number(event.keyCode);
     cc.sys.localStorage.setItem('keyBind',JSON.stringify(keyBind));
 }
 M.show = function(){

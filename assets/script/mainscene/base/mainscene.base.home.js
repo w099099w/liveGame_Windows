@@ -92,11 +92,15 @@ M.keyDown = function(event){
     }
 }
 M.exceptionHandle = function(){
-    console.log("查看",this.node.button_catche.comp.interactable);
     if(!this.node.button_catche.comp.interactable){
         return;
     }
-    this.frame.logic.scene.requestExceptionHandle();
+    this.frame.common.dialog.push('警告',2, '您确定要取消结算吗?',DIALOG.MB_YESNO,this.Result,{code:1});
+}
+M.Result = function(result){
+    if(result['ctrl'] === DIALOG.MB_YES){
+        this.frame.view.popup.tip.show(10);
+    }
 }
 M.setStateText = function(str){
     this.node.stateText.string = str;
