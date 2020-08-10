@@ -44,6 +44,15 @@ function isJsonStr(str){
           if(xhr.status == 0){
               reject({"code":'erroe',"message":"连接服务器失败"});
               return;
+          }else if(xhr.status == 401){
+            reject({"code":'erroe',"message":"登录已失效,请重新登录"});
+            setTimeout(()=>{
+              webSocket.close(false);
+              if(cc.director.getScene().getName() !== 'passport'){
+                cc.director.loadScene('passport');
+              }
+            },2000);
+            return;
           }
           if(isJsonStr(xhr.responseText)){
             reject(JSON.parse(xhr.responseText));

@@ -354,6 +354,17 @@ M.requestOpenCard = function(){
 M.requestSettleMent = function(){
     G.NETWORK.request('post',G.USER.choose_gameID ===  0?'/foo/sg/settle':'/foo/pair/settle',{},null,(success)=>{
         this.frame.common.toast.show('结算完成!',false);
+        setTimeout(()=>{
+            if(cc.director.getScene().getName() == 'mainScene'){
+                this.requestBroadcast();
+            }
+        },3000);
+    },(failed)=>{
+        this.frame.common.toast.show(failed.message);
+    },null,G.NETWORK.SPEICALHTTP);
+}
+M.requestBroadcast = function(){
+    G.NETWORK.request('post','/foo/room/win/broadcast',{},null,(success)=>{
     },(failed)=>{
         this.frame.common.toast.show(failed.message);
     },null,G.NETWORK.SPEICALHTTP);

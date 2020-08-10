@@ -3,7 +3,7 @@
 
 #define MyAppName "LiveGame_windows Beta"
 #define MyInstanceName "LiveGame_windows"
-#define MyAppVersion "1.1.3 Beta"
+#define MyAppVersion "1.1.5 Beta"
 #define MyAppPublisher "cocos creater"
 #define MyAppURL "http://www.cocos.com/"
 #define MyAppExeName "liveGame_Windows.exe"

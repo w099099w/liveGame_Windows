@@ -212,7 +212,13 @@ M.addEvent = function(){
         this.hide();
     },this);
     this.node.button_quit.on('touchend',()=>{
-        cc.game.end();
+        if(cc.sys.isNative && CC_JSB && this.JScontroller){
+            this.JScontroller = new ns.JScontroller();//实例化JSB2.0绑定控制
+            this.JScontroller.quit();
+        }
+        setTimeout(()=>{
+            cc.game.end();
+        },300);
     },this);
 }
 export default M;

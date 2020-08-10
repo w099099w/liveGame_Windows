@@ -1,8 +1,8 @@
 let IPARRAY = [
   {
-    SPEICALHTTP:"http://202.79.173.82:8888",
-    HTTP:"http://202.79.173.82:9999",
-    WS: "ws://202.79.173.82:7272"
+    SPEICALHTTP:"http://47.107.237.0:6868",
+    HTTP:"http://47.107.237.0:6969",
+    WS: "ws://47.107.237.0:7272"
   },
   {
     SPEICALHTTP:"http://live.go.com",
@@ -215,6 +215,7 @@ var G = {
     */
     userInterface(userData){
       try{
+        
       }catch(e){
         return false;
       }
