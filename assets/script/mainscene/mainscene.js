@@ -90,6 +90,9 @@ cc.Class({
     catchHandle(){
         this.frame.view.base.home.exceptionHandle();
     },
+    autoButton(){
+        this.frame.logic.scene.autoRun();
+    },
     //消息转发器
     onMessage(code,data){
         console.log('passport网络消息(websocket)',code,JSON.stringify(data));

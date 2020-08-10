@@ -79,6 +79,7 @@ var G = {
     * @param {object} USER 用户配置
     */
   USER: {
+    auto:false,
     isDebug:true,
     tempData:null,
     choose_gameID:null,//选择的游戏ID

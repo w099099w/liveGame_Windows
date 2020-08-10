@@ -65,6 +65,7 @@ M.reset = function(){
     this.resetCard();
 }
 M.resetCard = function(){
+    
     if(!this.node.playerList){
         this.inistancePlayerList();
         return;
@@ -152,6 +153,22 @@ M.lookCard = function(cardCode,isToast = true){
                 targetNode.getComponent(cc.Sprite).spriteFrame = this.frame.common.loadAtlas.getSpriteFrame('card',cardName);
                 setTimeout(()=>{
                     if(this.checkAllCardIslooked()){
+                        if(G.USER.auto){
+                            if(this.frame.logic.scene.autoState == 2)return;
+                            this.frame.logic.scene.autoState = 2;
+                            let ti = 6;
+                            this.frame.logic.scene.node.autoLabel.string = ti+'秒后确认开牌';
+                            this.t = setInterval(()=>{
+                                ti--
+                                this.frame.logic.scene.node.autoLabel.string = ti+'秒后确认开牌';
+                                if(ti == 0){
+                                    this.frame.logic.scene.requestOpenCard();
+                                    this.frame.logic.scene.node.autoLabel.string = '确认开牌中';
+                                    clearInterval(this.t);
+                                    this.t = null;
+                                }
+                            },1000);
+                        }
                         this.setBetButtonState(BetState.STATE_OPENCARD);
                         this.setFoucs(false);
                         this.node.cardCode.string = '';

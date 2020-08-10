@@ -7,6 +7,9 @@ M.init = function(component,frame){
         toggle:cc.find('config/toggle',frame.node).getComponent(cc.Toggle),
         configLay:cc.find('config/inputlayout',frame.node),
         remButton:cc.find('config/rember',frame.node).getComponent(cc.Toggle),
+        autoButton:cc.find('buttom/auto',frame.node).getComponent(cc.Button),
+        autoLabel:cc.find('config/autoLabel',frame.node).getComponent(cc.Label),
+        cant:cc.find('cant',frame.node).children,
     }
     this.closeInput = false;
     this.node.toggle.isChecked = false;
@@ -18,7 +21,9 @@ M.init = function(component,frame){
     this.addEvent();
 }
 M.reset = function(){
+    this.node.autoLabel.string = "";
     this.catche = false;
+    this.autoState = null;
     this.frame.view.base.home.hideCountDown();
     this.frame.view.base.home.resetCard();
     this.roomStateStr = [
@@ -50,7 +55,7 @@ M.reset = function(){
     this.requestState();
 }
 M.start = function(){
-   
+  this.node.cant.active = G.USER.auto;
 }
 M.configState = function(){
     this.toggleState = this.node.toggle.isChecked;
@@ -131,6 +136,22 @@ M.autoOpenCard = function(){
         if(this.isOkConfig()){
             let id = this.frame.view.base.home.calcTempID();
             if(id == -1){
+                if(G.USER.auto){
+                    if(this.autoState == 2)return;
+                    this.autoState = 2;
+                    let ti = 3;
+                    this.node.autoLabel.string = ti+'秒后确认开牌';
+                    this.t = setInterval(()=>{
+                        ti--
+                        this.node.autoLabel.string = ti+'秒后确认开牌';
+                        if(ti == 0){
+                            this.requestOpenCard();
+                            this.node.autoLabel.string = '确认开牌中';
+                            clearInterval(this.t);
+                            this.t = null;
+                        }
+                    },1000);
+                }
                 return;
             }
             id = id < 10?String('0'+id):String(id);
@@ -149,6 +170,22 @@ M.autoOpenCard = function(){
         do{
             let id = this.frame.view.base.home.calcTempID();
             if(id == -1){
+                if(G.USER.auto){
+                    if(this.autoState == 2)return;
+                    this.autoState = 2;
+                    let ti = 3;
+                    this.node.autoLabel.string = ti+'秒后确认开牌';
+                    this.t = setInterval(()=>{
+                        ti--
+                        this.node.autoLabel.string = ti+'秒后确认开牌';
+                        if(ti == 0){
+                            this.requestOpenCard();
+                            this.node.autoLabel.string = '确认开牌中';
+                            clearInterval(this.t);
+                            this.t = null;
+                        }
+                    },1000);
+                }
                 return;
             }
             id = id < 10?String('0'+id):String(id);
@@ -225,7 +262,130 @@ M.onMessage = function(data){
                 this.flushOpenCard(data.info);
             }
         }
+        if(G.USER.auto){
+            switch(this.RoomState){
+                case RoomState.ROOM_SHUFFLE:{
+                    if(this.autoState == 1)return;
+                    this.autoState = 1;
+                    let ti = 3;
+                    this.node.autoLabel.string = ti+'秒后开始押注';
+                    this.t = setInterval(()=>{
+                        ti--
+                        this.node.autoLabel.string = ti+'秒后开始押注';
+                        if(ti == 0){
+                            this.requestBeting();
+                            this.node.autoLabel.string = '开始押注';
+                            clearInterval(this.t);
+                            this.t = null;
+                        }
+                    },1000);
+                }break;
+                case RoomState.ROOM_SEE_CARD:{
+                    if(this.frame.view.base.home.calcTempID() == -1){
+                        if(this.autoState == 2)return;
+                        this.autoState = 2;
+                        let ti = 3;
+                        this.node.autoLabel.string = ti+'秒后确认开牌';
+                        this.t = setInterval(()=>{
+                            ti--
+                            this.node.autoLabel.string = ti+'秒后确认开牌';
+                            if(ti == 0){
+                                this.requestOpenCard();
+                                this.node.autoLabel.string = '确认开牌中';
+                                clearInterval(this.t);
+                                this.t = null;
+                            }
+                        },1000);
+                    }else{
+                        if(this.autoState == 3)return;
+                            this.autoState = 3;
+                            let ti = 3;
+                            this.node.autoLabel.string = ti+'秒后自动翻牌';
+                            this.t = setInterval(()=>{
+                                ti--
+                                this.node.autoLabel.string = ti+'秒后自动翻牌';
+                                if(ti == 0){
+                                    this.autoOpenCard();
+                                    this.node.autoLabel.string = '自动翻牌中';
+                                    clearInterval(this.t);
+                                    this.t = null;
+                                }
+                        },1000);
+                    }
+                }break;
+            }
+        }
     }     
+}
+M.autoRun = function(){
+    G.USER.auto = !G.USER.auto;
+    if(G.USER.auto){    
+        this.node.autoButton.node.getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = '停止自动运行';
+        this.node.cant.forEach((item,key)=>{
+            item.on('touchend',()=>{
+                this.frame.common.toast.show('请先停止自动运行');
+            },this);
+        },this);
+        if(this.button_betStateCode === BetState.STATE_NOOPENROOM || this.frame.logic.scene.RoomState === RoomState.ROOM_NOT_OPEN){
+            this.requestStartGame();
+            this.autoState = 0;
+            return;
+        }
+        switch(this.RoomState){
+            case RoomState.ROOM_SHUFFLE:{
+                this.autoState = 1;
+                let ti = 3;
+                this.node.autoLabel.string = ti+'秒后开始押注';
+                this.t = setInterval(()=>{
+                    ti--
+                    this.node.autoLabel.string = ti+'秒后开始押注';
+                    if(ti == 0){
+                        this.requestBeting();
+                        this.node.autoLabel.string = '开始押注';
+                        clearInterval(this.t);
+                        this.t = null;
+                    }
+                },1000);
+            }break;
+            case RoomState.ROOM_SEE_CARD:{
+                if(this.frame.view.base.home.calcTempID() == -1){
+                    this.autoState = 2;
+                    let ti = 3;
+                    this.node.autoLabel.string = ti+'秒后确认开牌';
+                    this.t = setInterval(()=>{
+                        ti--
+                        this.node.autoLabel.string = ti+'秒后确认开牌';
+                        if(ti == 0){
+                            this.requestOpenCard();
+                            this.node.autoLabel.string = '确认开牌中';
+                            clearInterval(this.t);
+                            this.t = null;
+                        }
+                    },1000);
+                }else{
+                    this.autoState = 3;
+                    let ti = 3;
+                    this.node.autoLabel.string = ti+'秒后自动翻牌';
+                    this.t = setInterval(()=>{
+                        ti--
+                        this.node.autoLabel.string = ti+'秒后自动翻牌';
+                        if(ti == 0){
+                            this.autoOpenCard();
+                            this.node.autoLabel.string = '自动翻牌中';
+                            clearInterval(this.t);
+                            this.t = null;
+                        }
+                    },1000);
+                }
+            }break;
+        }
+    }else{
+        this.node.autoButton.node.getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = '启动自动运行';
+        this.node.cant.forEach((item,key)=>{
+            item.off('touchend');
+        },this);
+    }
+    this.node.cant.active = G.USER.auto;
 }
 //webSocket刷新所有牌
 M.flushOpenCard = function(data){
@@ -398,6 +558,10 @@ M.onDestroy = function(){
         clearInterval(this.timer);
         this.timer = null;
     }
+    if(this.t){
+        clearInterval(this.t);
+        this.t = null;
+    } 
 }
 M.addEvent = function(){
     for(let i = 0; i < this.node.configLay.children.length;++i){
