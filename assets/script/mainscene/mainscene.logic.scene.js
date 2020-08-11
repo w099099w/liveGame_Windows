@@ -115,7 +115,7 @@ M.SameOut = function(arr){
     let repeatID = [];
     while(i<=arr.length){ 
         key = arr[i];
-        for(k=i+1;k<=arr.length;k++){
+        for(let k=i+1;k<=arr.length;k++){
             if(key==arr[k]){
                 repeatID.push(i,k);
             }       
@@ -524,7 +524,7 @@ M.requestSettleMent = function(){
     },null,G.NETWORK.SPEICALHTTP);
 }
 M.requestBroadcast = function(){
-    G.NETWORK.request('post','/foo/room/win/broadcast',{},null,(success)=>{
+    G.NETWORK.request('post','/foo/room/win/broadcast/'+String(G.USER.choose_gameID+1),{},null,(success)=>{
     },(failed)=>{
         this.frame.common.toast.show(failed.message);
     },null,G.NETWORK.SPEICALHTTP);

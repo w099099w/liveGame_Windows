@@ -40,6 +40,14 @@ SolidCompression=yes
 WizardStyle=modern
 
 [code]
+
+function GetbatFileName: string;
+var
+  location: String;
+begin
+      Result := 'C:\Users\'+GetUserNameString()+'\Desktop\关闭直播PC端.bat';
+end;
+
 function deleteCache():Boolean;
 var userName: String;
       deleteDir: String;
@@ -103,6 +111,7 @@ Name: "english"; MessagesFile: "compiler:Languages\English.isl"
 [Tasks]
 Name: "delCache"; Description: "清除之前遗留的数据缓存";GroupDescription:"遗留的数据缓存";Flags:checkablealone
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "createClosebat"; Description: "创建强制关闭脚本"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 6.1; Check: not IsAdminInstallMode
 
 [Files]
@@ -114,6 +123,7 @@ Source: "F:\PROJECT\liveGame_Windows\build\jsb-default\frameworks\runtime-src\pr
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autodesktop}\强制关闭直播PC端.bat"; Filename: "{app}\强制关闭直播PC端.bat"; Tasks: createClosebat
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [Run]
