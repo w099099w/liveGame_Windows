@@ -35,4 +35,10 @@ By CocosCreator2.3.2@2020
 变更 服务器的地址变更
 新增 取消结算功能
 By CocosCreator2.3.2@2020
+By CocosCreator2.3.2@2020
+版本1.1.6 更新日志
+新增 安装包可选择创建强制关闭脚本来强制关闭客户端
+By CocosCreator2.3.2@2020
+
+
 

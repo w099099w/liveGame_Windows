@@ -11,11 +11,9 @@ webSocket.create = function(url,loading) {
     if(!this.reconnect){
         this.loading.show('正在检查服务器连接...',false,false);
     }
-    console.log("创建连接",url);
     if (this.ws == null && url != null) {
-        console.log('connectID',G.NETWORK.clientID);
+        console.log("创建连接",G.NETWORK.WS+'/?old_client_id='+(G.NETWORK.clientID?G.NETWORK.clientID:'0'));
         this.ws = new WebSocket(G.NETWORK.WS+'/?old_client_id='+(G.NETWORK.clientID?G.NETWORK.clientID:'0'));
-        console.log(this.ws);
         this.ws.onopen = this.onopen.bind(this);//绑定回调
         this.ws.onmessage = this.onMessage.bind(this);//绑定消息
         this.ws.onerror = this.onError.bind(this);//绑定错误
@@ -147,7 +145,7 @@ webSocket.onMessage = function(event) {
         }else if(msg.code === 'init'){
             const token = cc.sys.localStorage.getItem('token');
             if(G.NETWORK.clientID && token){
-              G.NETWORK.request('post','/control/game/reconnect',{client_id:Number(msg.data.info)});
+              G.NETWORK.request('post','/control/game/reconnect',{client_id:String(msg.data.info),old_client_id:String(G.NETWORK.clientID)});
             }
             G.NETWORK.clientID = msg.data.info;
             this.loading.hide();

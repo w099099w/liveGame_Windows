@@ -56,6 +56,7 @@ M.reset = function(){
 }
 M.start = function(){
   this.node.cant.active = G.USER.auto;
+  this.node.autoButton.node.active = G.USER.isDebug;
 }
 M.configState = function(){
     this.toggleState = this.node.toggle.isChecked;
@@ -229,6 +230,9 @@ M.onMessage = function(data){
     }
     if(data && data.type === G.GAME[G.USER.choose_gameID].id){
         let state = data.stage;
+        if(state !== RoomState.ROOM_START_BET){
+            this.frame.view.base.home.hideCountDown();
+        }
         switch(state){
             case RoomState.ROOM_START_BET:{this.catche = true;this.frame.view.base.home.setStateText('押注倒计时: '+data.countdown);this.frame.view.base.home.setCountDown(data.countdown)};break;
             case RoomState.ROOM_CONFIRM_OPEN:{this.catche = true;this.frame.view.base.home.setStateText('开牌倒计时: '+data.countdown)};break;

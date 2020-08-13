@@ -1,3 +1,4 @@
+console.log("版本时间戳202008131642");
 const NETWORKTYPE = cc.Enum({
   /**
   * @description 公网IP

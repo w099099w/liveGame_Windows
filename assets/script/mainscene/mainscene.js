@@ -95,7 +95,7 @@ cc.Class({
     },
     //消息转发器
     onMessage(code,data){
-        console.log('passport网络消息(websocket)',code,JSON.stringify(data));
+        console.log('mainscene网络消息(websocket)',code,JSON.stringify(data));
         switch(code){
             case 'game':this.frame.logic.scene.onMessage(data);break;
             default:console.log('WARING 消息:'+code+" 内容:"+JSON.stringify(data)+" 未设置消息转发!");
