@@ -50,5 +50,9 @@ By CocosCreator2.3.2@2020
 版本1.1.8 Beta更新日志
 新增 更详细的日志输出
 By CocosCreator2.3.2@2020
+版本1.1.9 Beta更新日志
+新增 停止押注状态也显示倒计时
+By CocosCreator2.3.2@2020
+
 
 

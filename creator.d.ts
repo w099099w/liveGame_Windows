@@ -10781,7 +10781,7 @@ declare namespace cc {
 		```js
 		---
 		var url = cc.url.raw("textures/myTexture.png");
-		console.log(url);   // "resources/raw/textures/myTexture.png"
+		console.log(G.TOOL.getCurentTime(),url);   // "resources/raw/textures/myTexture.png"
 		
 		``` 
 		*/
@@ -12743,9 +12743,9 @@ declare namespace cc {
 		@example 
 		```js
 		node.walk(function (target) {
-		    console.log('Walked through node ' + target.name + ' for the first time');
+		    console.log(G.TOOL.getCurentTime(),'Walked through node ' + target.name + ' for the first time');
 		}, function (target) {
-		    console.log('Walked through node ' + target.name + ' after walked all children in its sub tree');
+		    console.log(G.TOOL.getCurentTime(),'Walked through node ' + target.name + ' after walked all children in its sub tree');
 		});
 		``` 
 		*/

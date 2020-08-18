@@ -29,7 +29,7 @@ M.reset = function(){
   */
 M.show = function(str,time = 0,ishide = false,maskshow = true,callback = null){
     if(typeof ishide !== 'boolean' || (typeof callback !== 'function' && callback !== null)){
-        console.log('error参数错误强制返回');
+        console.log(G.TOOL.getCurentTime(),'error参数错误强制返回');
         return;
     }
     this.sceneName = cc.director.getScene().getName();

@@ -82,7 +82,7 @@ let M = function() {
         if(!config.allLoop){
             config.curFlag = -1;//重置游标
             if(noticeData.length == 0){
-                console.log('没数据关闭');
+                console.log(G.TOOL.getCurentTime(),'没数据关闭');
                 _hide();
                 return;
             }

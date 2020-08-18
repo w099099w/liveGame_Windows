@@ -21,7 +21,7 @@ M.loadAtlas = function(name,path,callback = null){
     if(!name || !path ||typeof name !== 'string' || typeof path !== 'string'){
         return;
     }else if(this.cache && this.cache[name] && this.cache[name].path == path){
-        console.log('重复加载图集'+name);
+        console.log(G.TOOL.getCurentTime(),'重复加载图集'+name);
         if(callback){
             callback(null, this.cache[name].atlas);
         }
@@ -37,9 +37,9 @@ M.loadAtlas = function(name,path,callback = null){
                 atlas:atlas,
             }
             this.cache[name] = data;
-            console.log('success',name+'加载成功');
+            console.log(G.TOOL.getCurentTime(),'success',name+'加载成功');
         }else{
-            console.log('err',err)
+            console.log(G.TOOL.getCurentTime(),'err',err)
         }
         if(callback){
             callback(err, atlas);

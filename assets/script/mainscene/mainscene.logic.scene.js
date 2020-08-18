@@ -160,7 +160,7 @@ M.autoOpenCard = function(){
             let requestData = {
                 card_number:String(id+cardCode),
             }
-            console.log('自动翻牌码:'+requestData.card_number);
+            console.log(G.TOOL.getCurentTime(),'自动翻牌码:'+requestData.card_number);
             this.requestLookCard(requestData);
         }else{
             this.frame.common.toast.show('请先修正错误!',false);
@@ -212,7 +212,7 @@ M.autoOpenCard = function(){
                 cardValue += card_number;
             }
             if(cardValue.length !== 6){
-                console.log('数据错误:'+cardValue);
+                console.log(G.TOOL.getCurentTime(),'数据错误:'+cardValue);
             }
             
         }while(this.tempArr.includes(cardValue.substr(2,4)));
@@ -220,7 +220,7 @@ M.autoOpenCard = function(){
         let requestData = {
             card_number:cardValue
         }
-        console.log('自动翻牌码:'+cardValue);
+        console.log(G.TOOL.getCurentTime(),'自动翻牌码:'+cardValue);
         this.requestLookCard(requestData);
     }
 }
@@ -237,7 +237,7 @@ M.onMessage = function(data){
             case RoomState.ROOM_START_BET:{this.catche = true;this.frame.view.base.home.setStateText('押注倒计时: '+data.countdown);this.frame.view.base.home.setCountDown(data.countdown)};break;
             case RoomState.ROOM_CONFIRM_OPEN:{this.catche = true;this.frame.view.base.home.setStateText('开牌倒计时: '+data.countdown)};break;
             case RoomState.ROOM_SETTLEMENT:{this.catche = true;this.frame.view.base.home.setStateText('结算倒计时:'+data.countdown)};break;
-            case RoomState.ROOM_STOP_BET:this.frame.view.base.home.setStateText('停止押注');break;
+            case RoomState.ROOM_STOP_BET:this.frame.view.base.home.setStateText('停止押注'+(data.countdown != -1?(":"+String(data.countdown)):""));break;
             case RoomState.ROOM_END:this.frame.view.base.home.setStateText('结束倒计时: '+data.countdown);break;
         }
         //庄家发送控制
@@ -436,7 +436,7 @@ M.setBetButton = function(stateCode,countdown = -1){
 }
 /**@description 进入主场景时请求游戏状态*/
 M.requestState = function(){
-    console.log("请求游戏状态");
+    console.log(G.TOOL.getCurentTime(),"请求游戏状态");
     G.NETWORK.request('get','/control/game-room/status',{},null,(success)=>{
         if(success.code === 200){
             if(this.roomStateStr && this.roomStateStr[success.data.status]){
@@ -482,7 +482,7 @@ M.requestBeting = function(){
 /**@description 倒计时结束后进行游戏结算网络请求*/
 M.requestBankerInfo= function(){
     G.NETWORK.request('post',G.USER.choose_gameID === 0?'/foo/sg/banker':'/foo/pair/banker',{},null,(success)=>{
-        console.log('请求庄家信息返回');
+        console.log(G.TOOL.getCurentTime(),'请求庄家信息返回');
     },(failed)=>{
         this.frame.common.toast.show(failed.message);
     },null,G.NETWORK.SPEICALHTTP);
@@ -494,7 +494,7 @@ M.requestLookCard = function(requestData){
         return;
     }
     G.NETWORK.request('post','/control/game/watching',requestData,null,(success)=>{
-        console.log(success)
+        console.log(G.TOOL.getCurentTime(),success)
         this.frame.common.toast.show('开牌成功!',false);
     },(failed)=>{
         this.o = false;

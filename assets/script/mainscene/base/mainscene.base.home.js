@@ -82,7 +82,7 @@ M.resetCard = function(){
     });
 }
 M.keyDown = function(event){
-    console.log('keydownCode'+event.keyCode,'mybindKeycode:'+G.USER.keyBind.cin);
+    console.log(G.TOOL.getCurentTime(),'keydownCode'+event.keyCode,'mybindKeycode:'+G.USER.keyBind.cin);
     if(event.keyCode == G.USER.keyBind.cin ||event.keyCode == 13){
         this.checkLookCardData();
     }else if(event.keyCode == G.USER.keyBind.state){
@@ -147,7 +147,7 @@ M.lookCard = function(cardCode,isToast = true){
             }
             return;
         }
-        console.log('翻开的牌值',cardName);
+        console.log(G.TOOL.getCurentTime(),'翻开的牌值',cardName);
         if(cardName){
             targetNode.runAction(cc.sequence(cc.scaleTo(0.2, 0, 1), cc.scaleTo(0.2, 1, 1),cc.callFunc(()=>{
                 targetNode.getComponent(cc.Sprite).spriteFrame = this.frame.common.loadAtlas.getSpriteFrame('card',cardName);
@@ -288,13 +288,13 @@ M.onDestroy = function(){
     cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.keyDown, this);
 }
 M.setFoucs = function(bool){
-    console.log('设置输入状态',this.getFoucs(),bool);
+    console.log(G.TOOL.getCurentTime(),'设置输入状态',this.getFoucs(),bool);
     if(this.getFoucs() !== bool){
         if(bool){
-            console.log('可键入');
+            console.log(G.TOOL.getCurentTime(),'可键入');
             this.node.cardCode.focus();
         }else{
-            console.log('不可键入');
+            console.log(G.TOOL.getCurentTime(),'不可键入');
             this.node.cardCode.blur();
         }  
     } 

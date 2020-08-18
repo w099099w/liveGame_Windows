@@ -15,7 +15,7 @@ function isJsonStr(str){
               return false;
           }
       } catch(e) {
-          console.log('error：'+str+'!!!不是JSON 字符串'+e);
+          console.log(G.TOOL.getCurentTime(),'error：'+str+'!!!不是JSON 字符串'+e);
           return false;
       }
   }
@@ -37,7 +37,7 @@ function isJsonStr(str){
       xhr.timeout = G.NETWORK.httpOutTimer*1000;
       //函数绑定
       xhr.onload = function(){
-        console.log(xhr.responseText);
+        console.log(G.TOOL.getCurentTime(),xhr.responseText);
         if (xhr.status === 200) {
           resolve(JSON.parse(xhr.responseText))
         }else{
@@ -62,7 +62,7 @@ function isJsonStr(str){
           
         }
       }
-      console.log('token:'+token);
+      console.log(G.TOOL.getCurentTime(),'token:'+token);
       //连接出错
       xhr.error = function(){
         reject({"code":'erroe',"message":"连接服务器失败"});
@@ -102,7 +102,7 @@ function isJsonStr(str){
           xhr.setRequestHeader('Authorization', 'Bearer ' + token)
         }
         if(cc.sys.localStorage.getItem('sendType') == 'BIN'){
-          console.log('二进制文件发送');
+          console.log(G.TOOL.getCurentTime(),'二进制文件发送');
           cc.sys.localStorage.setItem('sendType','JSON');
           xhr.setRequestHeader('Content-Type', 'application/octet-stream');
           xhr.send(params);

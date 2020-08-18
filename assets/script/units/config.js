@@ -42,14 +42,16 @@ var G = {
       }
       ajax(method, url, params,progressFunction,host)
         .then(res => {
-          console.log(url+' request success\n'+JSON.stringify(params),JSON.stringify(res));
+          console.log(G.TOOL.getCurentTime(),url+' request success\n'+JSON.stringify(params)+"\n",JSON.stringify(res));
+          console.log("-------------------------------------------------------");
           if(common && common.loading){
             common.loading.hide();
           }
           callback?callback(res?res:null):{};
         })
         .catch(error => {
-          console.log(url+'request failed\n'+JSON.stringify(params),JSON.stringify(error));
+          console.log(G.TOOL.getCurentTime(),url+'request failed\n'+JSON.stringify(params)+"\n",JSON.stringify(error));
+          console.log("-------------------------------------------------------");
           if(common && common.loading){
             common.loading.hide();
           }
@@ -103,6 +105,21 @@ var G = {
     wechat: "OFF-LINE"
   },
   TOOL: {
+    getCurentTime()
+    {
+      if(!G.USER.isDebug){
+        return "0000-00-00 00:00:00";
+      }
+      function add0(m){return m<10?'0'+m:m };
+      let time = new Date();
+      let y = time.getFullYear();
+      let m = time.getMonth()+1;
+      let d = time.getDate();
+      let h = time.getHours();
+      let mm = time.getMinutes();
+      let s = time.getSeconds();
+      return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+    },
     timer:null,
     /**
     * @description: 验证是否是合格的手机号
@@ -177,7 +194,7 @@ var G = {
     * @return {string} 返回文件名称出错返回null;
     */
     cardValueToName(num,color){
-      console.log('值:'+num,'花色:'+color)
+      console.log(G.TOOL.getCurentTime(),'值:'+num,'花色:'+color)
       if(num < 0 || num > 13 || color < 1 || color > 8){
         return null;
       }else if(G.USER.choose_gameID == 1){
@@ -203,7 +220,7 @@ var G = {
           }
       }
       if(!cardName || Number(cardName.substr(1,2)) < 0 || Number(cardName.substr(1,2)) > 53){
-          console.log('error牌值计算错误',cardName)
+          console.log(G.TOOL.getCurentTime(),'error牌值计算错误',cardName)
           return null;
       }
       return cardName;

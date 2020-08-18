@@ -53,17 +53,17 @@ cc.Class({
     },
     init(){
         for (let key in frame.common) {
-            console.log('初始化模块'+key);
+            console.log(G.TOOL.getCurentTime(),'初始化模块'+key);
             this.frame.common[key].init(cc.Component, frame)
         }
         for (let key in frame.view) {
             for (let k in frame.view[key]){
-                console.log('初始化模块'+key+'.'+k);
+                console.log(G.TOOL.getCurentTime(),'初始化模块'+key+'.'+k);
                 this.frame.view[key][k].init(cc.Component, frame)
             }   
         }
         for (let key in frame.logic) {
-            console.log('初始化模块'+key);
+            console.log(G.TOOL.getCurentTime(),'初始化模块'+key);
             this.frame.logic[key].init(cc.Component, frame)
         }
     },
@@ -75,7 +75,7 @@ cc.Class({
         }
         this.frame.logic.scene.start();
         setTimeout(()=>{
-            this.frame.view.base.notice.addText("这是一个通知的测试用于测试可用性");
+            this.frame.view.base.notice.addText("THIS SOFTWARE VERSION IS 1.0.8 DESIGNED BY COCOSCREATOR 2020 VER 2.3.2.");
         },2000);
     },
     testButton(){
@@ -95,10 +95,10 @@ cc.Class({
     },
     //消息转发器
     onMessage(code,data){
-        console.log('mainscene网络消息(websocket)',code,JSON.stringify(data));
+        console.log(G.TOOL.getCurentTime(),'mainscene网络消息(websocket)',code,JSON.stringify(data));
         switch(code){
             case 'game':this.frame.logic.scene.onMessage(data);break;
-            default:console.log('WARING 消息:'+code+" 内容:"+JSON.stringify(data)+" 未设置消息转发!");
+            default:console.log(G.TOOL.getCurentTime(),'WARING 消息:'+code+" 内容:"+JSON.stringify(data)+" 未设置消息转发!");
         } 
     },
     update (dt) {

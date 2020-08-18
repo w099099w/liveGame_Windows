@@ -55,7 +55,7 @@ cc.Class({
         this.frame.view.base.login.show();
     },
     onMessage(code,data){
-        console.log('passport网络消息(websocket)',code,JSON.stringify(data));
+        console.log(G.TOOL.getCurentTime(),'passport网络消息(websocket)',code,JSON.stringify(data));
         //缓存保存
         if(code = 'game'){
             G.USER.tempData = {

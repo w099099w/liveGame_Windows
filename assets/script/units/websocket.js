@@ -12,7 +12,7 @@ webSocket.create = function(url,loading) {
         this.loading.show('正在检查服务器连接...',false,false);
     }
     if (this.ws == null && url != null) {
-        console.log("创建连接",G.NETWORK.WS+'/?old_client_id='+(G.NETWORK.clientID?G.NETWORK.clientID:'0'));
+        console.log(G.TOOL.getCurentTime(),"创建连接",G.NETWORK.WS+'/?old_client_id='+(G.NETWORK.clientID?G.NETWORK.clientID:'0'));
         this.ws = new WebSocket(G.NETWORK.WS+'/?old_client_id='+(G.NETWORK.clientID?G.NETWORK.clientID:'0'));
         this.ws.onopen = this.onopen.bind(this);//绑定回调
         this.ws.onmessage = this.onMessage.bind(this);//绑定消息
@@ -23,11 +23,11 @@ webSocket.create = function(url,loading) {
 }
 
 webSocket.onopen = function(){
-  console.log('连接ws服务器成功==========')
+  console.log(G.TOOL.getCurentTime(),'连接ws服务器成功==========')
   this.sendTimer = true;
   if(G.NETWORK.isHeartBeat){
     if(!G.NETWORK.heart_Time > 0){
-        console.log("您已开启心跳但时间设置不合法,请设置为大于0" + "  当前值"+G.NETWORK.heart_Time);
+        console.log(G.TOOL.getCurentTime(),"您已开启心跳但时间设置不合法,请设置为大于0" + "  当前值"+G.NETWORK.heart_Time);
         return;
     }
     G.NETWORK.heartbeat_ID = setInterval(()=>{
@@ -48,7 +48,7 @@ webSocket.onopen = function(){
  * 重置
  */
 webSocket.reset = function() {
-    console.log("重置网络消息队列==========")
+    console.log(G.TOOL.getCurentTime(),"重置网络消息队列==========")
     if (this.reconnect != true) {
         this.reconnect = false
     }
@@ -79,7 +79,7 @@ webSocket.state = function(){
 webSocket.send = function(code, data) {
     if (this.ws != null && this.ws.readyState == 1 && code != null && data != null) {
         var msg = { code: code, data: data }
-        console.log(msg, 'send==========')
+        console.log(G.TOOL.getCurentTime(),msg, 'send==========')
         this.ws.send(JSON.stringify(msg))
     }
 }
@@ -88,7 +88,7 @@ webSocket.send = function(code, data) {
  * 主动强制关闭连接;
  */
 webSocket.close = function(isreconnect = false) {
-    console.log('主动关闭连接==========')
+    console.log(G.TOOL.getCurentTime(),'主动关闭连接==========')
     this.reconnect = isreconnect;
     this.ws.close();
 }
@@ -98,7 +98,7 @@ webSocket.closeFunction = function(){
         this.closeTime = new Date();
     }
     this.ws = null;
-    console.log(this.reconnect?"已开启断线重连":"未开启断线重连")
+    console.log(G.TOOL.getCurentTime(),this.reconnect?"已开启断线重连":"未开启断线重连")
     if(G.NETWORK.isHeartBeat && G.NETWORK.heartbeat_ID){
         clearInterval(G.NETWORK.heartbeat_ID);
         G.NETWORK.heartbeat_ID = null;
@@ -126,7 +126,7 @@ webSocket.isJsonStr = function(str){
                 return false;
             }
         } catch(e) {
-            console.log('error：'+str+'!!!不是JSON 字符串'+e);
+            console.log(G.TOOL.getCurentTime(),'error：'+str+'!!!不是JSON 字符串'+e);
             return false;
         }
     }
@@ -139,7 +139,7 @@ webSocket.onMessage = function(event) {
     let msg = this.isJsonStr(event.data);
     if(msg){
         if(msg.code === 'keep'){
-            console.log('准许保持连接');
+            console.log(G.TOOL.getCurentTime(),'准许保持连接');
            this.sendTimer = true;
            return;
         }else if(msg.code === 'init'){
@@ -151,7 +151,7 @@ webSocket.onMessage = function(event) {
             this.loading.hide();
             return;
         }
-      console.log("websocket过滤网络消息==========");
+      console.log(G.TOOL.getCurentTime(),"websocket过滤网络消息==========");
       this.queue.push(msg)//推送到队列
     } 
 }
@@ -160,7 +160,7 @@ webSocket.onMessage = function(event) {
  * 连接错误
  */
 webSocket.onError = function(event) {
-    console.log('onError==========')
+    console.log(G.TOOL.getCurentTime(),'onError==========')
 }
 
 
@@ -168,7 +168,7 @@ webSocket.onError = function(event) {
  * 连接被动关闭
  */
 webSocket.onClose = function(event) {
-    console.log('网络关闭==========')
+    console.log(G.TOOL.getCurentTime(),'网络关闭==========')
     this.closeFunction();
 }
 

@@ -31,7 +31,7 @@ M.hide = function(){
 M.request = function(){
     //网络请求
     G.NETWORK.request('delete','/control/dealer/logout',{},null,(success)=>{
-        console.log(success);
+        console.log(G.TOOL.getCurentTime(),success);
         if(success.code === 200){
             webSocket.close();
             this.frame.common.loading.show('正在退出登录...',1000,false,true,()=>{

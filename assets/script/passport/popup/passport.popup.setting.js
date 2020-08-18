@@ -65,7 +65,7 @@ M.onDestroy = function() {
     cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown_cinCardType, this);
 }
 M.keyShow = function(keyCode){
-    console.log(keyCode);
+    console.log(G.TOOL.getCurentTime(),keyCode);
     let showString = null;
     switch(keyCode){
         case 8:showString = 'BackSpace';break;
@@ -135,7 +135,7 @@ M.keyShow = function(keyCode){
     return showString?showString:String.fromCharCode(keyCode);
 }
 M.onKeyDown_state = function(event){
-    console.log(event.keyCode);
+    console.log(G.TOOL.getCurentTime(),event.keyCode);
     if(event.keyCode == 27 || event.keyCode == 89 || event.keyCode == 78){
         this.frame.common.toast.show('该键已被系统预制!,请重试');
         return;
@@ -155,7 +155,7 @@ M.onKeyDown_state = function(event){
     cc.sys.localStorage.setItem('keyBind',JSON.stringify(keyBind));
 }
 M.onKeyDown_cinCardType = function(event){
-    console.log(event.keyCode);
+    console.log(G.TOOL.getCurentTime(),event.keyCode);
     if(event.keyCode == 27 || event.keyCode == 89 || event.keyCode == 78){
         this.frame.common.toast.show('该键已被系统预制!,请重试');
         return;
